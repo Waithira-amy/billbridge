@@ -1,31 +1,55 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <nav 
+      className={`fixed top-0 w-full z-50 transition-all duration-500 ${
+        isScrolled 
+          ? "bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm py-3" 
+          : "bg-transparent py-6"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full border-2 border-blue-950 flex items-center justify-center">
-            <span className="font-bold text-sm text-blue-950 tracking-tight">B</span>
+        {/* Logo - Scaled down */}
+        <Link href="/" className="flex items-center gap-2">
+          <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors ${isScrolled ? 'border-blue-950' : 'border-blue-950'}`}>
+            <span className="font-bold text-xs text-blue-950 tracking-tight">B</span>
           </div>
-          <span className="text-xl font-extrabold tracking-tight text-blue-950">BillBridge</span>
+          <span className="text-lg font-extrabold tracking-tight text-blue-950">BillBridge</span>
         </Link>
 
-        {/* Desktop Links - Now pointing to the section IDs */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-wider text-blue-950">
+        {/* Desktop Links - Smaller text (text-xs) and tighter gap */}
+        <div className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-blue-950">
           <Link href="#hero" className="hover:text-[#D4AF37] transition-colors">Home</Link>
           <Link href="#how-it-works" className="hover:text-[#D4AF37] transition-colors">How it Works</Link>
           <Link href="#campaigns" className="hover:text-[#D4AF37] transition-colors">Campaigns</Link>
         </div>
 
-        {/* Call to Action */}
+        {/* Call to Action - Scaled down button */}
         <div className="flex items-center gap-4">
-          <Link href="/login" className="hidden sm:block text-sm font-bold uppercase tracking-wider text-blue-950 hover:text-[#D4AF37] transition-colors">
+          <Link href="/login" className="hidden sm:block text-xs font-bold uppercase tracking-wider text-blue-950 hover:text-[#D4AF37] transition-colors">
             Sign In
           </Link>
-          <button className="bg-blue-950 hover:bg-blue-900 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-md">
+          <button className="bg-blue-950 hover:bg-blue-900 text-white px-5 py-2 rounded-full text-xs font-bold transition-all shadow-md hover:shadow-lg">
             Start a Campaign
           </button>
         </div>

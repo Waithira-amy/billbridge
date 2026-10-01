@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/sections/Hero";
 import HowItWorks from "@/components/sections/HowItWorks";
+import ActiveBridges from "@/components/sections/VerifiedBills";
 
 export default function Home() {
   return (
@@ -11,8 +12,7 @@ export default function Home() {
       <main className="flex-grow">
         <Hero />
         <HowItWorks />
-        
-        {/* We can add the Campaigns Grid section here later! */}
+        <ActiveBridges />
       </main>
 
       <Footer />
