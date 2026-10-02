@@ -2,7 +2,8 @@
 export type Institution = { name: string; category: string };
 export type Campaign = { id: string; paybill: string; accountRef: string; title: string; organizerPhone: string;
   targetKes: number; raisedKes: number; status: "active" | "funded" };
-export type Payment = { hash: string; campaignId: string; kes: number; sats: number; bolt11: string; status: "pending" | "paid" };
+export type DonorDetails = { name?: string; email?: string; phone?: string };
+export type Payment = { hash: string; campaignId: string; kes: number; sats: number; bolt11: string; status: "pending" | "paid"; donor?: DonorDetails };
 export type Tx = { campaignId: string; kind: string; kes: number; ref: string; at: string };
 export const CATEGORIES: Record<string, string> = { "1": "Education", "2": "Medical", "3": "Community" };
 // Demo stand-in for the registered-business database. Production: query a real registry/KYB provider.

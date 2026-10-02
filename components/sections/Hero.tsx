@@ -29,10 +29,11 @@ export default function Hero() {
           </Link>
 
           {/* Button 2: Donate to a Campaign */}
-          <Link href="#campaigns" className="w-full md:w-auto">
-            <button className="w-full px-8 py-3 rounded-full text-sm font-bold text-blue-950 bg-gradient-to-r from-[#D4AF37] to-amber-400 hover:from-amber-400 hover:to-amber-300 transition-all shadow-[0_6px_15px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] hover:-translate-y-0.5 transform duration-200">
-              Donate to a Campaign
-            </button>
+          <Link
+            href="/campaigns"
+            className="w-full md:w-auto px-8 py-3 rounded-full text-sm font-bold text-blue-950 bg-gradient-to-r from-[#D4AF37] to-amber-400 hover:from-amber-400 hover:to-amber-300 transition-all shadow-[0_6px_15px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] hover:-translate-y-0.5 transform duration-200 flex items-center justify-center"
+          >
+            Donate to a Campaign
           </Link>
 
           {/* Button 3: Start a Campaign */}

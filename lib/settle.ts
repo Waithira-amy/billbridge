@@ -11,5 +11,9 @@ export async function confirmPayment(hash: string) {
   db.txs.push({ campaignId: c.id, kind: "settlement_to_institution", kes: p.kes, ref: `PAYBILL ${c.paybill} / ${c.accountRef} / MPESA-${hash.slice(0, 8).toUpperCase()}`, at });
   const left = Math.max(0, c.targetKes - c.raisedKes);
   await sendSms(c.organizerPhone, `BillBridge: KES ${p.kes} paid to ${inst.name} (acct ${c.accountRef}) for "${c.title}". Remaining: KES ${left}.`);
+  if (p.donor?.phone) {
+    const donorGreeting = p.donor.name ? `, ${p.donor.name}` : "";
+    await sendSms(p.donor.phone, `BillBridge: Thank you${donorGreeting} for your KES ${p.kes} contribution to "${c.title}". Your payment is confirmed.`);
+  }
   return p;
 }

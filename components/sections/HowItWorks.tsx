@@ -119,7 +119,7 @@ export default function HowItWorks() {
                 {/* Pay Button with Pulsing Highlight */}
                 <div className="relative w-full">
                   <div className="absolute inset-0 bg-amber-400 rounded-full animate-ping opacity-40"></div>
-                  <Link href="/#campaigns" className="relative w-full bg-gradient-to-r from-[#D4AF37] to-amber-500 text-blue-950 rounded-full py-4 font-bold text-lg shadow-lg shadow-amber-500/20 z-10 flex justify-center items-center gap-2">
+                  <Link href="/campaigns" className="relative w-full bg-gradient-to-r from-[#D4AF37] to-amber-500 text-blue-950 rounded-full py-4 font-bold text-lg shadow-lg shadow-amber-500/20 z-10 flex justify-center items-center gap-2">
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M11 21L13 13H20L9 3V11H2L11 21Z"/></svg>
                     Pay Instantly
                   </Link>
