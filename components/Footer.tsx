@@ -21,16 +21,16 @@ export default function Footer() {
           <ul className="space-y-3 text-blue-200 text-sm">
             <li><Link href="#campaigns" className="hover:text-white transition-colors">Active Campaigns</Link></li>
             <li><Link href="#how-it-works" className="hover:text-white transition-colors">How it Works</Link></li>
-            <li><Link href="#" className="hover:text-white transition-colors">Verified Institutions</Link></li>
+            <li><Link href="/institution" className="hover:text-white transition-colors">Verified Institutions</Link></li>
           </ul>
         </div>
 
         <div>
           <h4 className="font-bold text-[#D4AF37] mb-4 uppercase tracking-wider text-sm">Legal</h4>
           <ul className="space-y-3 text-blue-200 text-sm">
-            <li><Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-            <li><Link href="#" className="hover:text-white transition-colors">Terms of Service</Link></li>
-            <li><Link href="#" className="hover:text-white transition-colors">Contact Us</Link></li>
+            <li><Link href="/legal" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+            <li><Link href="/legal" className="hover:text-white transition-colors">Terms of Service</Link></li>
+            <li><Link href="mailto:hello@billbridge.example" className="hover:text-white transition-colors">Contact Us</Link></li>
           </ul>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import ShareButton from "@/components/ShareButton";
 export default function HowItWorks() {
   return (
     <section id="how-it-works" className="py-16 bg-slate-50 overflow-hidden">
@@ -50,7 +52,7 @@ export default function HowItWorks() {
               <div className="w-10 h-10 bg-blue-100 text-blue-950 rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-4">1</div>
               <h4 className="text-2xl font-bold text-blue-950 mb-3">Dial the Code</h4>
               <p className="text-gray-600 leading-relaxed text-sm">
-                Start on any basic phone. Dial the code, enter the Hospital or School's official PayBill number, and enter the amount needed.
+                Start on any basic phone. Dial the code, enter the Hospital or School&apos;s official PayBill number, and enter the amount needed.
               </p>
             </div>
           </div>
@@ -78,10 +80,10 @@ export default function HowItWorks() {
                 {/* Forward/Share Button with Pulsing Highlight */}
                 <div className="relative mx-auto w-full">
                   <div className="absolute inset-0 bg-blue-400 rounded-full animate-ping opacity-50"></div>
-                  <button className="relative w-full bg-blue-600 text-white rounded-full py-3 font-bold flex items-center justify-center gap-2 shadow-lg z-10">
+                  <ShareButton text="Help fund a verified bill on BillBridge:" path="/#campaigns" className="relative w-full bg-blue-600 text-white rounded-full py-3 font-bold flex items-center justify-center gap-2 shadow-lg z-10">
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M15 5l-1.41 1.41L18.17 11H2v2h16.17l-4.59 4.59L15 19l7-7-7-7z"/></svg>
                     Forward to Family
-                  </button>
+                  </ShareButton>
                 </div>
               </div>
             </div>
@@ -117,10 +119,10 @@ export default function HowItWorks() {
                 {/* Pay Button with Pulsing Highlight */}
                 <div className="relative w-full">
                   <div className="absolute inset-0 bg-amber-400 rounded-full animate-ping opacity-40"></div>
-                  <button className="relative w-full bg-gradient-to-r from-[#D4AF37] to-amber-500 text-blue-950 rounded-full py-4 font-bold text-lg shadow-lg shadow-amber-500/20 z-10 flex justify-center items-center gap-2">
+                  <Link href="/#campaigns" className="relative w-full bg-gradient-to-r from-[#D4AF37] to-amber-500 text-blue-950 rounded-full py-4 font-bold text-lg shadow-lg shadow-amber-500/20 z-10 flex justify-center items-center gap-2">
                     <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M11 21L13 13H20L9 3V11H2L11 21Z"/></svg>
                     Pay Instantly
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -130,7 +132,7 @@ export default function HowItWorks() {
               <div className="w-10 h-10 bg-[#D4AF37] text-blue-950 rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-4 shadow-md">3</div>
               <h4 className="text-2xl font-bold text-blue-950 mb-3">They Pay Directly</h4>
               <p className="text-gray-600 leading-relaxed text-sm">
-                Relatives abroad open the link and tap pay. The money goes straight to the hospital's account immediately. No middlemen.
+                Relatives abroad open the link and tap pay. The money goes straight to the hospital&apos;s account immediately. No middlemen.
               </p>
             </div>
           </div>

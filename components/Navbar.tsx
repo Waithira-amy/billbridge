@@ -39,9 +39,9 @@ export default function Navbar() {
 
         {/* Desktop Links - Smaller text (text-xs) and tighter gap */}
         <div className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-blue-950">
-          <Link href="#hero" className="hover:text-[#D4AF37] transition-colors">Home</Link>
-          <Link href="#how-it-works" className="hover:text-[#D4AF37] transition-colors">How it Works</Link>
-          <Link href="#campaigns" className="hover:text-[#D4AF37] transition-colors">Campaigns</Link>
+          <Link href="/#hero" className="hover:text-[#D4AF37] transition-colors">Home</Link>
+          <Link href="/#how-it-works" className="hover:text-[#D4AF37] transition-colors">How it Works</Link>
+          <Link href="/#campaigns" className="hover:text-[#D4AF37] transition-colors">Campaigns</Link>
         </div>
 
         {/* Call to Action - Scaled down button */}
@@ -49,9 +49,9 @@ export default function Navbar() {
           <Link href="/login" className="hidden sm:block text-xs font-bold uppercase tracking-wider text-blue-950 hover:text-[#D4AF37] transition-colors">
             Sign In
           </Link>
-          <button className="bg-blue-950 hover:bg-blue-900 text-white px-5 py-2 rounded-full text-xs font-bold transition-all shadow-md hover:shadow-lg">
+          <Link href="/start" className="bg-blue-950 hover:bg-blue-900 text-white px-5 py-2 rounded-full text-xs font-bold transition-all shadow-md hover:shadow-lg">
             Start a Campaign
-          </button>
+          </Link>
         </div>
       </div>
     </nav>
