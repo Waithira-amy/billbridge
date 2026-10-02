@@ -3,6 +3,7 @@
 import Navbar from "@/components/Navbar";
 import { QRCodeSVG } from "qrcode.react";
 import { use, useEffect, useState } from "react";
+import { allPlatformCurrencies } from "@/lib/currencies";
 
 const kes = (n: number) => "KES " + n.toLocaleString();
 
@@ -97,6 +98,13 @@ export default function Pay({ params }: { params: Promise<{ id: string }> }) {
   const pct = Math.min(100, Math.round((bill.raisedKes / bill.targetKes) * 100));
   const isDemoInvoice =
     typeof inv?.bolt11 === "string" && inv.bolt11.toLowerCase().includes("demo");
+  const invoiceCurrency = allPlatformCurrencies.find(({ code }) => code === inv?.currencyCode);
+  const formatSelectedCurrency = (amountKes: number) => invoiceCurrency
+    ? `${invoiceCurrency.symbol}${(amountKes * invoiceCurrency.rate).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
+    : kes(amountKes);
+  const displayAmount = invoiceCurrency && Number.isFinite(Number(inv?.currencyAmount))
+    ? `${invoiceCurrency.symbol}${Number(inv.currencyAmount).toLocaleString("en-US", { maximumFractionDigits: 2 })}`
+    : kes(Number(inv?.kes || 0));
 
   if (!inv) {
     return shell(
@@ -138,9 +146,11 @@ export default function Pay({ params }: { params: Promise<{ id: string }> }) {
           />
         </div>
         <div className="mt-2 flex justify-between text-sm">
-          <span className="font-extrabold text-blue-950">{kes(bill.raisedKes)}</span>
+          <span className="font-extrabold text-blue-950">
+            {formatSelectedCurrency(bill.raisedKes)}
+          </span>
           <span className="text-gray-400">
-            {kes(bill.targetKes)} goal · {pct}%
+            {formatSelectedCurrency(bill.targetKes)} goal · {pct}%
           </span>
         </div>
       </div>
@@ -164,7 +174,10 @@ export default function Pay({ params }: { params: Promise<{ id: string }> }) {
               </div>
               <div className="flex justify-between gap-4">
                 <span className="text-gray-500">Amount</span>
-                <span className="font-bold text-blue-950">{kes(Number(inv.kes || 0))}</span>
+                <span className="font-bold text-blue-950">
+                  {displayAmount}
+                  {invoiceCurrency && invoiceCurrency.code !== "KES" && ` (${kes(Number(inv.kes || 0))})`}
+                </span>
               </div>
               <div className="flex justify-between gap-4">
                 <span className="text-gray-500">Payment</span>
@@ -192,9 +205,10 @@ export default function Pay({ params }: { params: Promise<{ id: string }> }) {
               Payment request
             </p>
             <h2 className="mt-1 text-xl font-extrabold text-blue-950">
-              Pay {kes(Number(inv.kes || 0))}
+              Pay {displayAmount}
             </h2>
             <p className="mt-1 text-sm text-gray-500">
+              {invoiceCurrency && invoiceCurrency.code !== "KES" && `${kes(Number(inv.kes || 0))} invoice value · `}
               ≈ {Number(inv.sats || 0).toLocaleString()} sats
             </p>
           </div>
@@ -277,7 +291,7 @@ export default function Pay({ params }: { params: Promise<{ id: string }> }) {
           )}
 
           <a
-            href={`/donate/${id}`}
+            href={`/donate/${id}?currency=${invoiceCurrency?.code ?? "USD"}`}
             className="block w-full text-center text-sm font-semibold text-gray-500 hover:text-blue-950"
           >
             ← Change contribution amount
