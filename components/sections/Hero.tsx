@@ -21,12 +21,12 @@ export default function Hero() {
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full max-w-4xl">
           
           {/* Button 1: Watch Demo */}
-          <button className="w-full md:w-auto px-6 py-3 rounded-full text-sm font-bold text-slate-700 bg-white/90 backdrop-blur-sm border border-slate-200 hover:bg-white hover:text-blue-950 transition-all shadow-sm flex items-center justify-center gap-2">
+          <Link href="#how-it-works" className="w-full md:w-auto px-6 py-3 rounded-full text-sm font-bold text-slate-700 bg-white/90 backdrop-blur-sm border border-slate-200 hover:bg-white hover:text-blue-950 transition-all shadow-sm flex items-center justify-center gap-2">
             <svg className="w-4 h-4 fill-current text-blue-600" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
             Watch Demo
-          </button>
+          </Link>
 
           {/* Button 2: Donate to a Campaign */}
           <Link href="#campaigns" className="w-full md:w-auto">
@@ -36,9 +36,9 @@ export default function Hero() {
           </Link>
 
           {/* Button 3: Start a Campaign */}
-          <button className="w-full md:w-auto px-8 py-3 rounded-full text-sm font-bold text-white bg-blue-950 hover:bg-blue-900 border border-blue-900 transition-all shadow-[0_6px_15px_rgba(23,37,84,0.2)] hover:shadow-[0_6px_20px_rgba(23,37,84,0.3)] hover:-translate-y-0.5 transform duration-200">
+          <Link href="/start" className="w-full md:w-auto px-8 py-3 rounded-full text-sm font-bold text-white bg-blue-950 hover:bg-blue-900 border border-blue-900 transition-all shadow-[0_6px_15px_rgba(23,37,84,0.2)] hover:shadow-[0_6px_20px_rgba(23,37,84,0.3)] hover:-translate-y-0.5 transform duration-200">
             Start a Campaign
-          </button>
+          </Link>
 
         </div>
       </div>

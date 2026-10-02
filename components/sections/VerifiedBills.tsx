@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 // 1. Comprehensive Currency Database
 const allPlatformCurrencies = [
@@ -278,12 +279,12 @@ export default function VerifiedBills() {
                     className="flex flex-col bg-white rounded-[2rem] border border-gray-100 shadow-xl overflow-hidden group hover:shadow-2xl transition-shadow"
                   >
                     
-                    <div className="relative w-full h-56 bg-slate-100">
+                    <div className="relative w-full h-56 bg-gradient-to-br from-blue-100 to-amber-100">
                       <Image
                         src={campaign.image}
                         alt={campaign.title}
                         fill
-                        unoptimized 
+                        unoptimized onError={(e) => { e.currentTarget.style.display = "none"; }}
                         className="object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                       
@@ -352,12 +353,12 @@ export default function VerifiedBills() {
                         </div>
                       </div>
 
-                      <button 
-                        className="w-full py-4 rounded-full font-bold text-white transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                      <Link href={`/pay/BB-${campaign.id}`}
+                        className="block text-center w-full py-4 rounded-full font-bold text-white transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
                         style={{ backgroundColor: campaign.color }}
                       >
                         Donate Now
-                      </button>
+                      </Link>
 
                     </div>
                   </motion.div>
