@@ -41,7 +41,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-blue-950">
           <Link href="/#hero" className="hover:text-[#D4AF37] transition-colors">Home</Link>
           <Link href="/#how-it-works" className="hover:text-[#D4AF37] transition-colors">How it Works</Link>
-          <Link href="/#campaigns" className="hover:text-[#D4AF37] transition-colors">Campaigns</Link>
+          <Link href="/campaigns" className="hover:text-[#D4AF37] transition-colors">Campaigns</Link>
         </div>
 
         {/* Call to Action - Scaled down button */}

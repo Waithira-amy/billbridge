@@ -353,7 +353,7 @@ export default function VerifiedBills() {
                         </div>
                       </div>
 
-                      <Link href={`/pay/BB-${campaign.id}`}
+                      <Link href={`/donate/BB-${campaign.id}`}
                         className="block text-center w-full py-4 rounded-full font-bold text-white transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
                         style={{ backgroundColor: campaign.color }}
                       >

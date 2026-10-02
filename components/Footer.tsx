@@ -19,7 +19,7 @@ export default function Footer() {
         <div>
           <h4 className="font-bold text-[#D4AF37] mb-4 uppercase tracking-wider text-sm">Explore</h4>
           <ul className="space-y-3 text-blue-200 text-sm">
-            <li><Link href="#campaigns" className="hover:text-white transition-colors">Active Campaigns</Link></li>
+            <li><Link href="/campaigns" className="hover:text-white transition-colors">Active Campaigns</Link></li>
             <li><Link href="#how-it-works" className="hover:text-white transition-colors">How it Works</Link></li>
             <li><Link href="/institution" className="hover:text-white transition-colors">Verified Institutions</Link></li>
           </ul>
