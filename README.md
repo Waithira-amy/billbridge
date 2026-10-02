@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BillBridge
+**Transparent fundraising, borderless contributions.**
 
-## Getting Started
+BillBridge lets families, friends and the diaspora fund **verified institutional bills** (school fees, hospital bills, community projects). Donors pay over **Bitcoin Lightning**; funds are held in **escrow** and released to the institution's PayBill in shillings. Nobody needs to understand Bitcoin.
 
-First, run the development server:
+> Prototype status: verification and the user flow are real. In demo mode the Lightning payment, conversion and final payout are **simulated**.
 
+## Features
+- Campaign cards with category filters, currency selector and **donation modal** (Lightning QR + copyable invoice + live KES/USD/NGN/ZAR/GHS... to sats converter, simulated M-Pesa/card, receipt)
+- **Registration**: web form (`/start`) and **USSD** (`*384*99#` example) with instant PayBill verification; unknown PayBills and personal wallets are rejected
+- **Interactive USSD simulator** on the landing page
+- **Escrow engine**: payments held until the goal is met, then released to the verified institution
+- Public **Verified Institutions** page, institution dashboard, guided **/demo**, **/lightning** (Lightning to M-Pesa via bitcoin.co.ke)
+- **AI help chatbot** that explains Lightning, financial freedom, PayBill and more; **feedback form**; WhatsApp sharing with real links
+- Multi-currency + sats **FX service** (cached), African campaign illustrations
+
+## Tech stack
+Next.js 16 (App Router) · React · TypeScript · Tailwind CSS · Next.js route handlers · LNbits (Lightning invoices) · bitcoin.co.ke LNURL API · Africa's Talking (USSD/SMS) · Anthropic Claude API (optional chatbot) · qrcode.react · PostgreSQL + Prisma schema (`prisma/schema.prisma`, not yet wired)
+
+## Quick start
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local      # Windows: copy .env.example .env.local
+npm install
+npm run dev                     # http://localhost:3000
 ```
+Demo path: Landing > **Donate Now** > Lightning > *simulate wallet payment* > receipt. Also try `/demo`, the USSD simulator (PayBill `400200`), `/lightning`, `/institutions`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables (`.env.example`)
+| Variable | Purpose |
+|---|---|
+| `LNBITS_URL`, `LNBITS_INVOICE_KEY` | Real Lightning invoices. Empty = demo mode |
+| `APP_URL`, `NEXT_PUBLIC_APP_URL` | Public URL used in SMS and WhatsApp links |
+| `AT_USERNAME`, `AT_API_KEY` | Africa's Talking SMS (empty = logged to console) |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | AI chatbot (empty = built-in glossary answers) |
+| `BITCOINKE_LIVE` | `true` = REAL mainnet Lightning-to-M-Pesa payments. Leave empty for demo |
+| `FALLBACK_BTC_USD` | Fallback BTC price if live rates are unreachable |
+| `FEEDBACK_WEBHOOK_URL`, `FEEDBACK_ADMIN_KEY` | Forward / read feedback submissions |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project structure
+`app/` pages and `app/api/` routes · `components/` UI (DonateModal, UssdSimulator, Chat...) · `lib/` logic (store, lightning, settle, fx, mpesaln, knowledge) · `prisma/` target schema
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Real vs simulated
+| Real | Simulated / not built |
+|---|---|
+| PayBill verification, flows, USSD handler, escrow logic, FX service, chatbot | Lightning payment and sats-to-KES conversion (demo mode), final PayBill payout, registry (demo data) |
+| Lightning invoices with an LNbits key; M-Pesa leg with `BITCOINKE_LIVE` | Auth/roles, database persistence, donor dashboard, document upload, refunds |
 
-## Learn More
+## Roadmap
+Wire Postgres + Prisma and Auth.js roles; real registry (KYB) checks; Daraja PayBill payouts and STK push; mainnet pilot with 2-3 institutions; escrow refunds on deadline.
 
-To learn more about Next.js, take a look at the following resources:
+## H.A.U.T.E.
+Human first (harambee, verified payee) · Accessible (USSD + web + chatbot) · Useful now (pays existing PayBills in KES) · Trustworthy (registry, escrow, receipts) · Easy (one link, QR, 4-click demo).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Team
+Dee · Lucy · Amy · Beth · Tina · Jael
