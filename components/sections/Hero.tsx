@@ -5,11 +5,10 @@ export default function Hero() {
   return (
     <section id="hero" className="relative h-screen flex flex-col justify-end pb-12 md:pb-16 bg-white overflow-hidden">
       
-      {/* Background Image Container */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/billbridge-hero-v2.jpg"
-          alt="BillBridge Overview"
+          alt="BillBridge logo"
           fill
           priority
           className="object-cover object-center scale-125"
