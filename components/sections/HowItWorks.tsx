@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
+import UssdSimulator from "@/components/UssdSimulator";
 
 export default function HowItWorks() {
   return (
@@ -11,49 +12,23 @@ export default function HowItWorks() {
           <h2 className="text-xs font-bold tracking-[0.2em] text-[#D4AF37] uppercase mb-3">Simple as SMS</h2>
           <h3 className="text-3xl md:text-4xl font-extrabold text-blue-950 mb-4">How BillBridge Works</h3>
           <p className="text-sm md:text-base text-gray-600 max-w-xl mx-auto">
-            No apps to download on the ground. See exactly how a family can clear an emergency bill with help from relatives abroad in just three steps.
+            No apps to download on the ground. Try the USSD flow on the phone below — same path organizers use on a basic handset.
           </p>
         </div>
 
         {/* Tightened gap between phones */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
           
-          {/* STEP 1: THE DIALER */}
+          {/* STEP 1: THE DIALER (interactive) */}
           <div className="flex flex-col items-center">
-            {/* Phone Mockup - Scaled down to 220x440 */}
-            <div className="w-[220px] h-[440px] bg-white rounded-[2.5rem] border-[8px] border-gray-900 shadow-lg relative overflow-hidden flex flex-col mb-6">
-              {/* Phone Notch */}
-              <div className="absolute top-0 inset-x-0 h-4 bg-gray-900 w-28 mx-auto rounded-b-xl"></div>
-              
-              <div className="flex-1 flex flex-col justify-end p-5 bg-gray-50">
-                <div className="text-center text-3xl font-light text-slate-800 mb-8 tracking-wider">
-                  *384*99#
-                </div>
-                
-                {/* Fake Keypad */}
-                <div className="grid grid-cols-3 gap-y-4 text-center text-xl text-slate-600 mb-6 font-light">
-                  <span>1</span><span>2</span><span>3</span>
-                  <span>4</span><span>5</span><span>6</span>
-                  <span>7</span><span>8</span><span>9</span>
-                  <span>*</span><span>0</span><span>#</span>
-                </div>
-
-                {/* Call Button with Pulsing Highlight */}
-                <div className="flex justify-center relative mb-3">
-                  <div className="absolute inset-0 bg-green-400 rounded-full animate-ping opacity-60 h-12 w-12 mx-auto"></div>
-                  <div className="relative bg-green-500 text-white rounded-full h-12 w-12 flex items-center justify-center shadow-md z-10">
-                    <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <UssdSimulator />
 
             {/* Layman Explanation */}
-            <div className="text-center px-4">
+            <div className="text-center px-4 mt-2">
               <div className="w-8 h-8 bg-blue-100 text-blue-950 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-3">1</div>
               <h4 className="text-lg font-bold text-blue-950 mb-2">Dial the Code</h4>
               <p className="text-gray-600 text-xs leading-relaxed">
-                Start on any basic phone. Dial the code, enter the Hospital or School's official PayBill number, and enter the amount needed.
+                Start on any basic phone. Dial the code, enter the Hospital or School&apos;s official PayBill number, and enter the amount needed.
               </p>
             </div>
           </div>
@@ -133,7 +108,7 @@ export default function HowItWorks() {
               <div className="w-8 h-8 bg-[#D4AF37] text-blue-950 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-3 shadow-md">3</div>
               <h4 className="text-lg font-bold text-blue-950 mb-2">They Pay Directly</h4>
               <p className="text-gray-600 text-xs leading-relaxed">
-                Relatives abroad open the link and tap pay. The money goes straight to the hospital's account immediately. No middlemen.
+                Relatives abroad open the link and tap pay. The money goes straight to the hospital&apos;s account immediately. No middlemen.
               </p>
             </div>
           </div>
