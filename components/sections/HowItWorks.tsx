@@ -1,6 +1,41 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import ShareButton from "@/components/ShareButton";
+
+type Campaign = {
+  id: string;
+  title: string;
+  institution: string;
+};
+
 export default function HowItWorks() {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState("");
+  const [campaignError, setCampaignError] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadCampaigns() {
+      try {
+        const response = await fetch("/api/campaigns", { signal: controller.signal });
+        if (!response.ok) throw new Error(`Campaign request failed (${response.status})`);
+        setCampaigns(await response.json());
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.error("Unable to load campaigns for WhatsApp sharing:", error);
+        setCampaignError("Campaign links are unavailable right now.");
+      }
+    }
+
+    loadCampaigns();
+    return () => controller.abort();
+  }, []);
+
+  const selectedCampaign = campaigns.find((campaign) => campaign.id === selectedCampaignId);
+
   return (
     <section id="how-it-works" className="py-16 bg-slate-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
@@ -73,18 +108,62 @@ export default function HowItWorks() {
                 {/* Fake SMS Bubble */}
                 <div className="bg-gray-100 text-slate-800 p-4 rounded-2xl rounded-tl-sm text-sm mb-8 shadow-sm">
                   <p className="font-bold text-blue-950 mb-1">BillBridge Alert</p>
-                  <p className="mb-2">Campaign ready for Kenyatta National Hospital.</p>
-                  <p className="text-blue-600 underline">bbridge.io/knh-123</p>
+                  <p className="mb-2">
+                    {selectedCampaign
+                      ? `${selectedCampaign.title} for ${selectedCampaign.institution}.`
+                      : "Choose an active campaign to share its link."}
+                  </p>
+                  {selectedCampaign && (
+                    <p className="break-all text-blue-600 underline">
+                      /donate/{selectedCampaign.id}
+                    </p>
+                  )}
                 </div>
 
-                {/* Forward/Share Button with Pulsing Highlight */}
-                <div className="relative mx-auto w-full">
-                  <div className="absolute inset-0 bg-blue-400 rounded-full animate-ping opacity-50"></div>
-                  <ShareButton text="Help fund a verified bill on BillBridge:" path="/#campaigns" className="relative w-full bg-blue-600 text-white rounded-full py-3 font-bold flex items-center justify-center gap-2 shadow-lg z-10">
-                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M15 5l-1.41 1.41L18.17 11H2v2h16.17l-4.59 4.59L15 19l7-7-7-7z"/></svg>
-                    Forward to Family
-                  </ShareButton>
+                <div className="mb-4">
+                  <label htmlFor="how-it-works-campaign" className="mb-2 block text-xs font-bold text-slate-700">
+                    Choose campaign to share
+                  </label>
+                  <select
+                    id="how-it-works-campaign"
+                    value={selectedCampaignId}
+                    onChange={(event) => setSelectedCampaignId(event.target.value)}
+                    disabled={campaigns.length === 0}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-blue-950 outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
+                  >
+                    <option value="">
+                      {campaigns.length > 0 ? "Select a campaign" : "Loading campaigns..."}
+                    </option>
+                    {campaigns.map((campaign) => (
+                      <option key={campaign.id} value={campaign.id}>
+                        {campaign.title}
+                      </option>
+                    ))}
+                  </select>
+                  {campaignError && <p role="alert" className="mt-2 text-xs text-red-600">{campaignError}</p>}
                 </div>
+
+                {selectedCampaign ? (
+                  <div className="relative mx-auto w-full">
+                    <div className="absolute inset-0 bg-blue-400 rounded-full animate-ping opacity-50"></div>
+                    <ShareButton
+                      text={`Help fund ${selectedCampaign.title} for ${selectedCampaign.institution} on BillBridge:`}
+                      path={`/donate/${encodeURIComponent(selectedCampaign.id)}`}
+                      className="relative w-full bg-blue-600 text-white rounded-full py-3 font-bold flex items-center justify-center gap-2 shadow-lg z-10"
+                    >
+                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M15 5l-1.41 1.41L18.17 11H2v2h16.17l-4.59 4.59L15 19l7-7-7-7z"/></svg>
+                      Send link to family
+                    </ShareButton>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full rounded-full bg-slate-300 py-3 font-bold text-white"
+                  >
+                    {campaignError ? "Sharing unavailable" : "Select a campaign first"}
+                  </button>
+                )}
               </div>
             </div>
 
