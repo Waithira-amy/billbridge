@@ -44,13 +44,13 @@ export default function Navbar() {
           <Link href="/campaigns" className="hover:text-[#D4AF37] transition-colors">Campaigns</Link>
         </div>
 
-        {/* Call to Action - Scaled down button */}
+        {/* Call to Action - Updated for Institutional Partners */}
         <div className="flex items-center gap-4">
-          <Link href="/login" className="hidden sm:block text-xs font-bold uppercase tracking-wider text-blue-950 hover:text-[#D4AF37] transition-colors">
-            Sign In
+          <Link href="/login" className="hidden sm:block text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-950 transition-colors">
+            Partner Login
           </Link>
-          <Link href="/start" className="bg-blue-950 hover:bg-blue-900 text-white px-5 py-2 rounded-full text-xs font-bold transition-all shadow-md hover:shadow-lg">
-            Start a Campaign
+          <Link href="/start" className="bg-blue-950 hover:bg-slate-800 text-white px-6 py-2.5 rounded-full text-xs font-bold transition-all shadow-md hover:shadow-lg">
+            Partner Portal
           </Link>
         </div>
       </div>

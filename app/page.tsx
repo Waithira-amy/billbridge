@@ -1,7 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/sections/Hero";
+import VerifiedNetwork from "@/components/sections/VerifiedNetwork";
 import HowItWorks from "@/components/sections/HowItWorks";
+import LiveImpact from "@/components/sections/LiveImpact";
 import ActiveBridges from "@/components/sections/VerifiedBills";
 
 export default function Home() {
@@ -13,6 +15,9 @@ export default function Home() {
         <Hero />
         <HowItWorks />
         <ActiveBridges />
+        <VerifiedNetwork />
+        <LiveImpact />
+        
       </main>
 
       <Footer />
