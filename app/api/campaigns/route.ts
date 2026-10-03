@@ -2,7 +2,9 @@ import { db, REGISTRY, createCampaign } from "@/lib/store";
 import { sendSms } from "@/lib/sms";
 export const dynamic = "force-dynamic";
 export async function GET() { // public list; organizer phone is never exposed
-  return Response.json([...db.campaigns.values()].map(c => ({ id: c.id, title: c.title, institution: REGISTRY[c.paybill].name, category: REGISTRY[c.paybill].category, targetKes: c.targetKes, raisedKes: c.raisedKes, status: c.status })));
+  return Response.json([...db.campaigns.values()]
+    .filter(c => c.status === "active" || c.status === "funded")
+    .map(c => ({ id: c.id, title: c.title, institution: REGISTRY[c.paybill].name, category: REGISTRY[c.paybill].category, targetKes: c.targetKes, raisedKes: c.raisedKes, status: c.status })));
 }
 export async function POST(req: Request) {
   const b = await req.json(), target = Math.floor(Number(b.targetKes));

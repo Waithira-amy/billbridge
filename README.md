@@ -15,7 +15,7 @@ BillBridge lets families, friends and the diaspora fund **verified institutional
 - Multi-currency + sats **FX service** (cached), African campaign illustrations
 
 ## Tech stack
-Next.js 16 (App Router) · React · TypeScript · Tailwind CSS · Next.js route handlers · LNbits (Lightning invoices) · bitcoin.co.ke LNURL API · Africa's Talking (USSD/SMS) · Anthropic Claude API (optional chatbot) · qrcode.react · PostgreSQL + Prisma schema (`prisma/schema.prisma`, not yet wired)
+Next.js 16 (App Router) · React · TypeScript · Tailwind CSS · Next.js route handlers · LNbits (Lightning invoices) · bitcoin.co.ke LNURL API · Africa's Talking (USSD/SMS) · OpenRouter (optional chatbot) · qrcode.react · PostgreSQL + Prisma schema (`prisma/schema.prisma`, not yet wired)
 
 ## Quick start
 ```bash
@@ -28,16 +28,29 @@ Demo path: Landing > **Donate Now** > Lightning > *simulate wallet payment* > re
 ## Environment variables (`.env.example`)
 | Variable | Purpose |
 |---|---|
+| `DATABASE_URL` | PostgreSQL connection string used by Prisma |
 | `LNBITS_URL`, `LNBITS_INVOICE_KEY` | Real Lightning invoices. Empty = demo mode |
 | `APP_URL`, `NEXT_PUBLIC_APP_URL` | Public URL used in SMS and WhatsApp links |
 | `AT_USERNAME`, `AT_API_KEY` | Africa's Talking SMS (empty = logged to console) |
-| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | AI chatbot (empty = built-in glossary answers) |
+| `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` | BillBridge Help AI via OpenRouter (empty = built-in FAQ answers). Default free model: `nvidia/nemotron-3.5-lightning:free` |
 | `BITCOINKE_LIVE` | `true` = REAL mainnet Lightning-to-M-Pesa payments. Leave empty for demo |
 | `FALLBACK_BTC_USD` | Fallback BTC price if live rates are unreachable |
 | `FEEDBACK_WEBHOOK_URL`, `FEEDBACK_ADMIN_KEY` | Forward / read feedback submissions |
 
 ## Project structure
 `app/` pages and `app/api/` routes · `components/` UI (DonateModal, UssdSimulator, Chat...) · `lib/` logic (store, lightning, settle, fx, mpesaln, knowledge) · `prisma/` target schema
+
+## PostgreSQL setup
+The Prisma schema defines users, verified institutions, campaigns, donations, and ledger transactions. Set `DATABASE_URL` in a root `.env` file or in the shell environment before running Prisma commands. The root `.env` file is loaded by Prisma CLI:
+
+```bash
+npm run db:generate
+npm run db:migrate
+npm run db:seed
+npm run db:studio
+```
+
+The checked-in initial migration creates the PostgreSQL tables and relations. The seed command inserts clearly labeled simulated demo institutions, campaigns, donations, and ledger transactions. Prisma Studio opens a browser interface for inspecting the records. The current application routes still use the in-memory demo store; switching those routes to Prisma is a separate step.
 
 ## Real vs simulated
 | Real | Simulated / not built |
