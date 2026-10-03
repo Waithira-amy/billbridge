@@ -8,12 +8,12 @@ export type Tx = { campaignId: string; kind: string; kes: number; ref: string; a
 export const CATEGORIES: Record<string, string> = { "1": "Education", "2": "Medical", "3": "Community" };
 // Demo stand-in for the registered-business database. Production: query a real registry/KYB provider.
 export const REGISTRY: Record<string, Institution> = {
-  "400200": { name: "St. Mary's High School (demo)", category: "Education" },
-  "522001": { name: "Kenyatta National Hospital (demo)", category: "Medical" },
-  "888880": { name: "Maji Safi Trust (demo)", category: "Community" },
-  "400300": { name: "Daystar University (demo)", category: "Education" },
-  "522002": { name: "Aga Khan Hospital (demo)", category: "Medical" },
-  "888881": { name: "Upendo Children's Home (demo)", category: "Community" } };
+  "400200": { name: "St. Mary's High School", category: "Education" },
+  "522001": { name: "Kenyatta National Hospital", category: "Medical" },
+  "888880": { name: "Maji Safi Trust", category: "Community" },
+  "400300": { name: "Daystar University", category: "Education" },
+  "522002": { name: "Aga Khan Hospital", category: "Medical" },
+  "888881": { name: "Upendo Children's Home", category: "Community" } };
 type BillBridgeStore = { campaigns: Map<string, Campaign>; payments: Map<string, Payment>; txs: Tx[] };
 const g = globalThis as typeof globalThis & { billbridge?: BillBridgeStore };
 g.billbridge ??= { campaigns: new Map<string, Campaign>([
