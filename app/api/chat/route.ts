@@ -74,8 +74,10 @@ function isOffTopic(question: string) {
   if (!t) return true;
   if (GREETING.test(t) && t.length < 40) return false;
   if (PRESET_ANSWERS[normalizeQuestion(t)]) return false;
-  if (ON_TOPIC.test(t)) return false;
-  return CLEARLY_OFF_TOPIC.test(t);
+  // Even if a broad ON_TOPIC word matches, block clear off-topic (e.g. "how do I cook")
+  if (CLEARLY_OFF_TOPIC.test(t)) return true;
+  // Default deny: only BillBridge-related wording goes to the model / FAQ
+  return !ON_TOPIC.test(t);
 }
 
 function isStockOffTopicReply(reply: string) {
@@ -100,8 +102,7 @@ function faqReply(last: string) {
   const preset = PRESET_ANSWERS[normalizeQuestion(last)];
   if (preset) return preset;
   if (isOffTopic(last)) return OFF_TOPIC_REPLY;
-  return FAQ.find(([re]) => re.test(last))?.[1]
-    ?? "I can help with starting a fundraiser, donating, verification, fees and USSD. Which would you like to know about?";
+  return FAQ.find(([re]) => re.test(last))?.[1] ?? OFF_TOPIC_REPLY;
 }
 
 function cleanReply(text: string) {
