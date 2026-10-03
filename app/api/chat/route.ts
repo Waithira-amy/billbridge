@@ -28,7 +28,15 @@ Product facts:
 Style: 2-4 short sentences. Friendly, plain language. Answer directly. No thinking aloud.`;
 
 /** Curated answers for the Help chip buttons — always correct, no model risk */
+const WHAT_IS_BILLBRIDGE =
+  "BillBridge is a fundraising platform for verified institutional bills — school fees, hospital bills, community projects. Organizers create a campaign with a registry-checked PayBill (web /start or USSD *384*99#); donors pay by Lightning, and funds go to the institution in KES — never to a personal wallet.";
+
+const ON_TOPIC_FALLBACK =
+  "I can help with what BillBridge is, starting a fundraiser, donating, verification, fees, and USSD. Which would you like to know about?";
+
 const PRESET_ANSWERS: Record<string, string> = {
+  "what is billbridge": WHAT_IS_BILLBRIDGE,
+  "what is billbridge?": WHAT_IS_BILLBRIDGE,
   "how do i start a fundraiser?":
     "Go to Start a fundraiser (/start), or dial *384*99#. Enter the institution's PayBill and account number; we verify it against the registry, then give you a share link.",
   "is my money safe?":
@@ -38,6 +46,7 @@ const PRESET_ANSWERS: Record<string, string> = {
 };
 
 const FAQ: [RegExp, string][] = [
+  [/what is billbridge|who are you|about billbridge|explain billbridge/i, WHAT_IS_BILLBRIDGE],
   [/start|create|organi[sz]|register/i, PRESET_ANSWERS["how do i start a fundraiser?"]],
   [/safe|trust|scam|divert|money/i, PRESET_ANSWERS["is my money safe?"]],
   [/escrow|held until|released to/i, "Donations are held in escrow until the campaign goal is met, then released to the verified institution's PayBill. The organizer never receives the funds. Refunds are not available in the current demo."],
@@ -102,7 +111,7 @@ function faqReply(last: string) {
   const preset = PRESET_ANSWERS[normalizeQuestion(last)];
   if (preset) return preset;
   if (isOffTopic(last)) return OFF_TOPIC_REPLY;
-  return FAQ.find(([re]) => re.test(last))?.[1] ?? OFF_TOPIC_REPLY;
+  return FAQ.find(([re]) => re.test(last))?.[1] ?? ON_TOPIC_FALLBACK;
 }
 
 function cleanReply(text: string) {
