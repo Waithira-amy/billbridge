@@ -1,19 +1,77 @@
-import { db, REGISTRY } from "./store";
+import { DonationStatus, LedgerTransactionType } from "@prisma/client";
+import { prisma } from "./prisma";
 import { sendSms } from "./sms";
-// Called when a Lightning payment is confirmed. Payout destination is ALWAYS the verified institution paybill (never the organizer).
+
 export async function confirmPayment(hash: string) {
-  const p = db.payments.get(hash); if (!p || p.status === "paid") return p ?? null; // idempotent
-  p.status = "paid"; const c = db.campaigns.get(p.campaignId)!, inst = REGISTRY[c.paybill];
-  c.raisedKes += p.kes; if (c.raisedKes >= c.targetKes) c.status = "funded";
-  const at = new Date().toISOString();
-  db.txs.push({ campaignId: c.id, kind: "payment_received", kes: p.kes, ref: hash, at });
-  // Swap sats -> KES and pay the institution's PayBill. Production: Daraja B2B or an LN-to-fiat provider.
-  db.txs.push({ campaignId: c.id, kind: "settlement_to_institution", kes: p.kes, ref: `PAYBILL ${c.paybill} / ${c.accountRef} / MPESA-${hash.slice(0, 8).toUpperCase()}`, at });
-  const left = Math.max(0, c.targetKes - c.raisedKes);
-  await sendSms(c.organizerPhone, `BillBridge: KES ${p.kes} paid to ${inst.name} (acct ${c.accountRef}) for "${c.title}". Remaining: KES ${left}.`);
-  if (p.donor?.phone) {
-    const donorGreeting = p.donor.name ? `, ${p.donor.name}` : "";
-    await sendSms(p.donor.phone, `BillBridge: Thank you${donorGreeting} for your KES ${p.kes} contribution to "${c.title}". Your payment is confirmed.`);
+  const payment = await prisma.$transaction(async (transaction) => {
+    const donation = await transaction.donation.findUnique({
+      where: { paymentHash: hash },
+      include: { campaign: { include: { institution: true } } },
+    });
+
+    if (!donation || donation.status === DonationStatus.PAID) return null;
+
+    const claimed = await transaction.donation.updateMany({
+      where: { id: donation.id, status: DonationStatus.PENDING },
+      data: { status: DonationStatus.PAID, paidAt: new Date() },
+    });
+    if (claimed.count === 0) return null;
+
+    const campaign = await transaction.campaign.update({
+      where: { id: donation.campaignId },
+      data: { raisedKes: { increment: donation.amountKes } },
+    });
+
+    if (campaign.raisedKes >= campaign.targetKes) {
+      await transaction.campaign.update({
+        where: { id: campaign.id },
+        data: { status: "FUNDED" },
+      });
+    }
+
+    await transaction.ledgerTransaction.createMany({
+      data: [
+        {
+          campaignId: campaign.id,
+          donationId: donation.id,
+          type: LedgerTransactionType.PAYMENT_RECEIVED,
+          amountKes: donation.amountKes,
+          sats: donation.sats,
+          reference: hash,
+          memo: "Payment confirmed",
+        },
+        {
+          campaignId: campaign.id,
+          donationId: donation.id,
+          type: LedgerTransactionType.SETTLEMENT_TO_INSTITUTION,
+          amountKes: donation.amountKes,
+          sats: donation.sats,
+          reference: `PAYBILL ${donation.campaign.institution.paybill} / ${donation.campaign.accountRef} / MPESA-${hash.slice(0, 8).toUpperCase()}`,
+          memo: "Payout simulation - not a real-world settlement",
+        },
+      ],
+    });
+
+    return {
+      donation,
+      raisedKes: campaign.raisedKes,
+      targetKes: campaign.targetKes,
+      title: campaign.title,
+      publicId: campaign.publicId,
+      organizerPhone: campaign.organizerPhone,
+      accountRef: campaign.accountRef,
+      institution: donation.campaign.institution.name,
+    };
+  });
+
+  if (!payment) return null;
+
+  const left = Math.max(0, payment.targetKes - payment.raisedKes);
+  await sendSms(payment.organizerPhone, `BillBridge: KES ${payment.donation.amountKes} paid to ${payment.institution} (acct ${payment.accountRef}) for "${payment.title}". Remaining: KES ${left}.`);
+  if (payment.donation.donorPhone) {
+    const donorGreeting = payment.donation.donorName ? `, ${payment.donation.donorName}` : "";
+    await sendSms(payment.donation.donorPhone, `BillBridge: Thank you${donorGreeting} for your KES ${payment.donation.amountKes} contribution to "${payment.title}". Your payment is confirmed.`);
   }
-  return p;
+
+  return payment.donation;
 }

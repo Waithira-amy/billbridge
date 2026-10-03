@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { allPlatformCurrencies } from "@/lib/currencies";
+import ShareButton from "@/components/ShareButton";
 
 // 2. Specific Beneficiaries & Portrait Images
 const allCampaigns = [
@@ -46,9 +47,37 @@ const allCampaigns = [
   }
 ];
 
+type CampaignSummary = {
+  id: string;
+  category: string;
+  title: string;
+  institution: string;
+  targetKes: number;
+  raisedKes: number;
+};
+
+type CampaignCard = {
+  id: string;
+  category: string;
+  title: string;
+  beneficiary?: string;
+  institution: string;
+  percentage: number;
+  baseRaised: number;
+  baseGoal: number;
+  satsEquivalent?: string;
+  color: string;
+  image?: string;
+};
+
+const fallbackColors = ["#10B981", "#D4AF37", "#3B82F6"];
+
 export default function VerifiedBills() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(0); 
+  const [campaigns, setCampaigns] = useState<CampaignCard[]>([]);
+  const [loadingCampaigns, setLoadingCampaigns] = useState(true);
+  const [campaignError, setCampaignError] = useState("");
   
   const [activeCurrencyCode, setActiveCurrencyCode] = useState("USD");
   const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
@@ -67,6 +96,43 @@ export default function VerifiedBills() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadCampaigns() {
+      try {
+        const response = await fetch("/api/campaigns", { signal: controller.signal });
+        if (!response.ok) throw new Error(`Campaign request failed (${response.status})`);
+
+        const records: CampaignSummary[] = await response.json();
+        setCampaigns(records.map((record, index) => {
+          const demo = allCampaigns.find((item) => `BB-${item.id}` === record.id);
+          const percentage = record.targetKes > 0
+            ? Math.min(100, Math.round((record.raisedKes / record.targetKes) * 100))
+            : 0;
+
+          return {
+            ...demo,
+            ...record,
+            percentage,
+            baseRaised: record.raisedKes,
+            baseGoal: record.targetKes,
+            color: demo?.color ?? fallbackColors[index % fallbackColors.length],
+          };
+        }));
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.error("Unable to load campaigns:", error);
+        setCampaignError("Campaigns could not be loaded. Please try again later.");
+      } finally {
+        if (!controller.signal.aborted) setLoadingCampaigns(false);
+      }
+    }
+
+    loadCampaigns();
+    return () => controller.abort();
+  }, []);
+
   const radius = 36;
   const circumference = 2 * Math.PI * radius;
 
@@ -78,7 +144,7 @@ export default function VerifiedBills() {
   const africanCurrencies = filteredCurrencies.filter(c => c.type === "African");
   const globalCurrencies = filteredCurrencies.filter(c => c.type === "Global");
 
-  const filteredCampaigns = allCampaigns.filter(
+  const filteredCampaigns = campaigns.filter(
     (campaign) => activeCategory === "All" || campaign.category === activeCategory
   );
 
@@ -236,7 +302,12 @@ export default function VerifiedBills() {
 
         {/* The Animated Carousel Grid */}
         <div className="min-h-[600px] relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 absolute w-full">
+          {loadingCampaigns && <p className="py-16 text-center text-gray-500">Loading verified campaigns...</p>}
+          {!loadingCampaigns && campaignError && <p role="alert" className="py-16 text-center text-red-600">{campaignError}</p>}
+          {!loadingCampaigns && !campaignError && campaigns.length === 0 && (
+            <p className="py-16 text-center text-gray-500">There are no active campaigns right now.</p>
+          )}
+          {!loadingCampaigns && !campaignError && campaigns.length > 0 && <div className="grid grid-cols-1 md:grid-cols-3 gap-10 absolute w-full">
             <AnimatePresence mode="popLayout">
               {currentCampaigns.map((campaign, index) => {
                 const strokeDashoffset = circumference - (campaign.percentage / 100) * circumference;
@@ -253,7 +324,7 @@ export default function VerifiedBills() {
                     
                     <div className="relative w-full h-56 bg-gradient-to-br from-blue-100 to-amber-100">
                       <Image
-                        src={campaign.image}
+                        src={campaign.image ?? "/billbridge-hero-v2.jpg"}
                         alt={campaign.title}
                         fill
                         unoptimized onError={(e) => { e.currentTarget.style.display = "none"; }}
@@ -291,12 +362,12 @@ export default function VerifiedBills() {
                       <h4 className="text-xl font-bold text-blue-950 mb-3 leading-tight">{campaign.title}</h4>
                       
                       <div className="flex flex-col gap-1.5 mb-6">
-                        <div className="flex items-start gap-2">
+                        {campaign.beneficiary && <div className="flex items-start gap-2">
                           <svg className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                           <p className="text-sm font-medium text-slate-800">
-                            <span className="text-gray-500 font-normal">For:</span> {campaign.beneficiary}
+                            {campaign.beneficiary && <><span className="text-gray-500 font-normal">For:</span> {campaign.beneficiary}</>}
                           </p>
-                        </div>
+                        </div>}
                         <div className="flex items-start gap-2">
                           <svg className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                           <p className="text-sm font-medium text-slate-800">
@@ -320,24 +391,31 @@ export default function VerifiedBills() {
                             {formatAmount(campaign.baseGoal)}
                           </span>
                         </div>
-                        <div className="text-xs font-bold text-amber-600 bg-amber-100/50 py-1.5 px-3 rounded-lg inline-block border border-amber-200">
+                        {campaign.satsEquivalent && <div className="text-xs font-bold text-amber-600 bg-amber-100/50 py-1.5 px-3 rounded-lg inline-block border border-amber-200">
                           Diaspora Est: {campaign.satsEquivalent}
-                        </div>
+                        </div>}
                       </div>
 
-                      <Link href={`/donate/BB-${campaign.id}?currency=${activeCurrencyCode}`}
+                      <Link href={`/donate/${encodeURIComponent(campaign.id)}?currency=${activeCurrencyCode}`}
                         className="block text-center w-full py-4 rounded-full font-bold text-white transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
                         style={{ backgroundColor: campaign.color }}
                       >
                         Donate Now
                       </Link>
+                      <ShareButton
+                        text={`Please support ${campaign.title} for ${campaign.institution} on BillBridge:`}
+                        path={`/donate/${encodeURIComponent(campaign.id)}`}
+                        className="mt-3 block w-full rounded-full border border-green-200 bg-green-50 py-3 text-center font-bold text-green-800 transition hover:bg-green-100"
+                      >
+                        Send link to family on WhatsApp
+                      </ShareButton>
 
                     </div>
                   </motion.div>
                 );
               })}
             </AnimatePresence>
-          </div>
+          </div>}
         </div>
 
       </div>

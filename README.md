@@ -50,16 +50,16 @@ npm run db:seed
 npm run db:studio
 ```
 
-The checked-in initial migration creates the PostgreSQL tables and relations. The seed command inserts clearly labeled simulated demo institutions, campaigns, donations, and ledger transactions. Prisma Studio opens a browser interface for inspecting the records. The current application routes still use the in-memory demo store; switching those routes to Prisma is a separate step.
+The checked-in initial migration creates the PostgreSQL tables and relations. The seed command inserts clearly labeled simulated demo institutions, campaigns, donations, and ledger transactions. Prisma Studio opens a browser interface for inspecting the records. Public campaign listing, creation, donation invoices, payment status, and ledger updates now persist through Prisma. Set `NEXT_PUBLIC_APP_URL` to the deployed site URL so WhatsApp shares open the live app; locally, links use the current localhost origin.
 
 ## Real vs simulated
 | Real | Simulated / not built |
 |---|---|
 | PayBill verification, flows, USSD handler, escrow logic, FX service, chatbot | Lightning payment and sats-to-KES conversion (demo mode), final PayBill payout, registry (demo data) |
-| Lightning invoices with an LNbits key; M-Pesa leg with `BITCOINKE_LIVE` | Auth/roles, database persistence, donor dashboard, document upload, refunds |
+| PostgreSQL persistence for campaigns, donations, and ledger entries; Lightning invoices with an LNbits key; M-Pesa leg with `BITCOINKE_LIVE` | Auth/roles, donor dashboard, document upload, refunds |
 
 ## Roadmap
-Wire Postgres + Prisma and Auth.js roles; real registry (KYB) checks; Daraja PayBill payouts and STK push; mainnet pilot with 2-3 institutions; escrow refunds on deadline.
+Add Auth.js roles; real registry (KYB) checks; Daraja PayBill payouts and STK push; mainnet pilot with 2-3 institutions; escrow refunds on deadline.
 
 ## H.A.U.T.E.
 Human first (harambee, verified payee) · Accessible (USSD + web + chatbot) · Useful now (pays existing PayBills in KES) · Trustworthy (registry, escrow, receipts) · Easy (one link, QR, 4-click demo).

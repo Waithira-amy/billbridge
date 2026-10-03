@@ -1,12 +1,26 @@
-import { db } from "@/lib/store";
+import { DonationStatus } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { createInvoice, kesToSats } from "@/lib/lightning";
 import { isValidDonorEmail, isValidDonorName, isValidDonorPhone } from "@/lib/donor-validation";
+
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const c = db.campaigns.get((await params).id); if (!c) return Response.json({ error: "not found" }, { status: 404 });
-  const body = await req.json();
-  const remaining = c.targetKes - c.raisedKes, kes = Math.floor(Number(body.amountKes));
+  const { id } = await params;
+  const campaign = await prisma.campaign.findUnique({ where: { publicId: id } });
+  if (!campaign) return Response.json({ error: "not found" }, { status: 404 });
+
+  const body: unknown = await req.json();
+  if (!body || typeof body !== "object") {
+    return Response.json({ error: "Enter a valid donation amount." }, { status: 400 });
+  }
+
+  const input = body as Record<string, unknown>;
+  const remaining = campaign.targetKes - campaign.raisedKes;
+  const kes = Math.floor(Number(input.amountKes));
   if (!(kes > 0) || kes > remaining) return Response.json({ error: `Amount must be 1-${remaining}` }, { status: 400 });
-  const details = body.donorDetails ?? {};
+
+  const details = input.donorDetails && typeof input.donorDetails === "object"
+    ? input.donorDetails as Record<string, unknown>
+    : {};
   const name = typeof details.name === "string" ? details.name.trim() : "";
   const email = typeof details.email === "string" ? details.email.trim() : "";
   const phone = typeof details.phone === "string" ? details.phone.replace(/[\s().-]/g, "") : "";
@@ -19,19 +33,43 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (phone && !isValidDonorPhone(phone)) {
     return Response.json({ error: "Enter a valid phone number for the selected country." }, { status: 400 });
   }
-  const donor = { ...(name && { name }), ...(email && { email }), ...(phone && { phone }) };
-  const sats = kesToSats(kes), inv = await createInvoice(sats, `BillBridge ${c.id}`);
-  db.payments.set(inv.hash, {
-    hash: inv.hash,
-    campaignId: c.id,
-    kes,
-    sats,
-    bolt11: inv.bolt11,
-    status: "pending",
-    ...(Object.keys(donor).length > 0 && { donor }),
+
+  const sats = kesToSats(kes);
+  const donation = await prisma.donation.create({
+    data: {
+      campaignId: campaign.id,
+      amountKes: kes,
+      sats,
+      donorName: name || null,
+      donorEmail: email || null,
+      donorPhone: phone || null,
+    },
   });
-  return Response.json({ hash: inv.hash, bolt11: inv.bolt11, sats, kes });
+
+  try {
+    const invoice = await createInvoice(sats, `BillBridge ${campaign.publicId}`);
+    await prisma.donation.update({
+      where: { id: donation.id },
+      data: { paymentHash: invoice.hash, bolt11: invoice.bolt11 },
+    });
+    return Response.json({ hash: invoice.hash, bolt11: invoice.bolt11, sats, kes });
+  } catch (error) {
+    await prisma.donation.update({
+      where: { id: donation.id },
+      data: { status: DonationStatus.FAILED },
+    });
+    console.error("Unable to create a donation invoice:", error);
+    return Response.json({ error: "Unable to create a payment request. Please try again." }, { status: 502 });
+  }
 }
-export async function GET(req: Request) { // poll status: ?hash=
-  const p = db.payments.get(new URL(req.url).searchParams.get("hash") ?? ""); return Response.json({ status: p?.status ?? "unknown" });
+
+export async function GET(req: Request) {
+  const paymentHash = new URL(req.url).searchParams.get("hash");
+  if (!paymentHash) return Response.json({ status: "unknown" });
+
+  const donation = await prisma.donation.findUnique({
+    where: { paymentHash },
+    select: { status: true },
+  });
+  return Response.json({ status: donation?.status.toLowerCase() ?? "unknown" });
 }

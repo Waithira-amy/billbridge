@@ -7,6 +7,7 @@ import PhoneInput from "react-phone-number-input";
 import { getCountryCallingCode, type Country } from "react-phone-number-input";
 import { allPlatformCurrencies } from "@/lib/currencies";
 import { isValidDonorEmail, isValidDonorName, isValidDonorPhone } from "@/lib/donor-validation";
+import ShareButton from "@/components/ShareButton";
 
 const kes = (n: number) => "KES " + n.toLocaleString();
 const SUGGESTED_AMOUNTS = [500, 1000, 2500, 5000, 10000];
@@ -292,6 +293,13 @@ export default function Donate({ params }: { params: Promise<{ id: string }> }) 
         <p className="mt-2 text-sm text-gray-500">
           Verified payee: {bill.institution} · PayBill {bill.paybill}
         </p>
+        <ShareButton
+          text={`Please support ${bill.title} for ${bill.institution} on BillBridge:`}
+          path={`/donate/${encodeURIComponent(id)}`}
+          className="mt-4 inline-flex rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-bold text-green-800 transition hover:bg-green-100"
+        >
+          Send link to family on WhatsApp
+        </ShareButton>
       </div>
 
       <div>
