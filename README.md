@@ -41,7 +41,7 @@ Demo path: Landing > **Donate Now** > Lightning > *simulate wallet payment* > re
 `app/` pages and `app/api/` routes · `components/` UI (DonateModal, UssdSimulator, Chat...) · `lib/` logic (store, lightning, settle, fx, mpesaln, knowledge) · `prisma/` target schema
 
 ## PostgreSQL setup
-The Prisma schema defines users, verified institutions, campaigns, donations, and ledger transactions. Set `DATABASE_URL` in a root `.env` file or in the shell environment before running Prisma commands. The root `.env` file is loaded by Prisma CLI:
+The Prisma schema defines users, verified institutions, campaigns, donations, ledger transactions, and feedback messages submitted on the Contact page. Set `DATABASE_URL` in a root `.env` file or in the shell environment before running Prisma commands. The root `.env` file is loaded by Prisma CLI:
 
 ```bash
 npm run db:generate
@@ -50,7 +50,7 @@ npm run db:seed
 npm run db:studio
 ```
 
-The checked-in initial migration creates the PostgreSQL tables and relations. The seed command inserts clearly labeled simulated demo institutions, campaigns, donations, and ledger transactions. Prisma Studio opens a browser interface for inspecting the records. Public campaign listing, creation, donation invoices, payment status, and ledger updates now persist through Prisma. Set `NEXT_PUBLIC_APP_URL` to the deployed site URL so WhatsApp shares open the live app; locally, links use the current localhost origin.
+The checked-in migrations create the PostgreSQL tables and relations. The seed command inserts clearly labeled simulated demo institutions, campaigns, donations, and ledger transactions. Prisma Studio opens a browser interface for inspecting the records, including feedback submitted via `/contact`. Public campaign listing, creation, donation invoices, payment status, and ledger updates now persist through Prisma. Set `NEXT_PUBLIC_APP_URL` to the deployed site URL so WhatsApp shares open the live app; locally, links use the current localhost origin.
 
 ## Real vs simulated
 | Real | Simulated / not built |

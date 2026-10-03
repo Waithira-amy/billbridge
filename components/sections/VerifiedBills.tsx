@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { allPlatformCurrencies } from "@/lib/currencies";
-import ShareButton from "@/components/ShareButton";
+import CampaignIllustration from "@/components/CampaignIllustration";
 
 // 2. Specific Beneficiaries & Portrait Images
 const allCampaigns = [
@@ -13,37 +12,31 @@ const allCampaigns = [
     id: 1, category: "Education", title: "Form 4 Tuition Arrears", 
     beneficiary: "David Ochieng", institution: "St. Mary's High School",
     percentage: 82, baseRaised: 41000, baseGoal: 50000, satsEquivalent: "~350k Sats", color: "#10B981", 
-    image: "https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800&auto=format&fit=crop" 
   },
   {
     id: 2, category: "Medical", title: "Maternity Ward Discharge", 
     beneficiary: "Grace Mutuku & Baby", institution: "Kenyatta National Hospital",
     percentage: 91, baseRaised: 136500, baseGoal: 150000, satsEquivalent: "~1.2M Sats", color: "#D4AF37", 
-    image: "https://images.unsplash.com/photo-1531123414708-536962a1473f?q=80&w=800&auto=format&fit=crop"
   },
   {
     id: 3, category: "Community", title: "Borehole Pump Repair", 
     beneficiary: "Maji Safi Village", institution: "Maji Safi Trust",
     percentage: 88, baseRaised: 88000, baseGoal: 100000, satsEquivalent: "~750k Sats", color: "#3B82F6",
-    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop"
   },
   {
     id: 4, category: "Education", title: "Final Year Exam Fees", 
     beneficiary: "Brian Kipkorir", institution: "Daystar University",
     percentage: 45, baseRaised: 27000, baseGoal: 60000, satsEquivalent: "~230k Sats", color: "#10B981", 
-    image: "https://images.unsplash.com/photo-1506803682981-6e718a9dd3ee?q=80&w=800&auto=format&fit=crop"
   },
   {
     id: 5, category: "Medical", title: "Emergency Appendectomy", 
     beneficiary: "Amina Hassan", institution: "Aga Khan Hospital",
     percentage: 60, baseRaised: 120000, baseGoal: 200000, satsEquivalent: "~1M Sats", color: "#D4AF37",
-    image: "https://images.unsplash.com/photo-1579883584852-c0e5a6fc30eb?q=80&w=800&auto=format&fit=crop"
   },
   {
     id: 6, category: "Community", title: "Solar Panel Installation", 
     beneficiary: "Upendo Orphanage", institution: "Upendo Children's Home",
     percentage: 30, baseRaised: 15000, baseGoal: 50000, satsEquivalent: "~128k Sats", color: "#3B82F6",
-    image: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?q=80&w=800&auto=format&fit=crop"
   }
 ];
 
@@ -67,7 +60,6 @@ type CampaignCard = {
   baseGoal: number;
   satsEquivalent?: string;
   color: string;
-  image?: string;
 };
 
 const fallbackColors = ["#10B981", "#D4AF37", "#3B82F6"];
@@ -323,13 +315,13 @@ export default function VerifiedBills() {
                   >
                     
                     <div className="relative w-full h-56 bg-gradient-to-br from-blue-100 to-amber-100">
-                      <Image
-                        src={campaign.image ?? "/billbridge-hero-v2.jpg"}
-                        alt={campaign.title}
-                        fill
-                        unoptimized onError={(e) => { e.currentTarget.style.display = "none"; }}
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
+                      <div className="h-full transition-transform duration-700 group-hover:scale-105">
+                        <CampaignIllustration
+                          id={campaign.id}
+                          title={campaign.title}
+                          category={campaign.category}
+                        />
+                      </div>
                       
                       <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-blue-950 text-xs font-extrabold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
                         {campaign.category}
@@ -402,14 +394,6 @@ export default function VerifiedBills() {
                       >
                         Donate Now
                       </Link>
-                      <ShareButton
-                        text={`Please support ${campaign.title} for ${campaign.institution} on BillBridge:`}
-                        path={`/donate/${encodeURIComponent(campaign.id)}`}
-                        className="mt-3 block w-full rounded-full border border-green-200 bg-green-50 py-3 text-center font-bold text-green-800 transition hover:bg-green-100"
-                      >
-                        Send link to family on WhatsApp
-                      </ShareButton>
-
                     </div>
                   </motion.div>
                 );
