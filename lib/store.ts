@@ -1,7 +1,7 @@
 // In-memory store for the demo. Swap for Supabase using supabase/schema.sql (same shapes).
 export type Institution = { name: string; category: string };
 export type Campaign = { id: string; paybill: string; accountRef: string; title: string; organizerPhone: string;
-  targetKes: number; raisedKes: number; status: "active" | "funded" };
+  targetKes: number; raisedKes: number; status: "pending_approval" | "active" | "funded" };
 export type DonorDetails = { name?: string; email?: string; phone?: string };
 export type Payment = { hash: string; campaignId: string; kes: number; sats: number; bolt11: string; status: "pending" | "paid"; donor?: DonorDetails };
 export type Tx = { campaignId: string; kind: string; kes: number; ref: string; at: string };
@@ -25,8 +25,9 @@ g.billbridge ??= { campaigns: new Map<string, Campaign>([
   ["BB-6", { id: "BB-6", paybill: "888881", accountRef: "DEMO-6", title: "Solar Panel Installation", organizerPhone: "+254700000006", targetKes: 50000, raisedKes: 15000, status: "active" }]]),
   payments: new Map<string, Payment>(), txs: [] as Tx[] };
 export const db: BillBridgeStore = g.billbridge;
-export function createCampaign(c: { paybill: string; accountRef: string; title: string; organizerPhone: string; targetKes: number }) {
+export function createCampaign(c: { paybill: string; accountRef: string; title: string; organizerPhone: string; targetKes: number; status?: Campaign["status"] }) {
   if (!REGISTRY[c.paybill]) return null; // verification engine: only registered institutions
   const id = "BB-" + (1000 + db.campaigns.size + 1);
-  const camp: Campaign = { id, ...c, raisedKes: 0, status: "active" }; db.campaigns.set(id, camp); return camp;
+  const { status = "active", ...details } = c;
+  const camp: Campaign = { id, ...details, raisedKes: 0, status }; db.campaigns.set(id, camp); return camp;
 }
