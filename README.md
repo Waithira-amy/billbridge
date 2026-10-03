@@ -28,6 +28,7 @@ Demo path: Landing > **Donate Now** > Lightning > *simulate wallet payment* > re
 ## Environment variables (`.env.example`)
 | Variable | Purpose |
 |---|---|
+| `DATABASE_URL` | PostgreSQL connection string used by Prisma |
 | `LNBITS_URL`, `LNBITS_INVOICE_KEY` | Real Lightning invoices. Empty = demo mode |
 | `APP_URL`, `NEXT_PUBLIC_APP_URL` | Public URL used in SMS and WhatsApp links |
 | `AT_USERNAME`, `AT_API_KEY` | Africa's Talking SMS (empty = logged to console) |
@@ -38,6 +39,18 @@ Demo path: Landing > **Donate Now** > Lightning > *simulate wallet payment* > re
 
 ## Project structure
 `app/` pages and `app/api/` routes · `components/` UI (DonateModal, UssdSimulator, Chat...) · `lib/` logic (store, lightning, settle, fx, mpesaln, knowledge) · `prisma/` target schema
+
+## PostgreSQL setup
+The Prisma schema defines users, verified institutions, campaigns, donations, and ledger transactions. Set `DATABASE_URL` in a root `.env` file or in the shell environment before running Prisma commands. The root `.env` file is loaded by Prisma CLI:
+
+```bash
+npm run db:generate
+npm run db:migrate
+npm run db:seed
+npm run db:studio
+```
+
+The checked-in initial migration creates the PostgreSQL tables and relations. The seed command inserts clearly labeled simulated demo institutions, campaigns, donations, and ledger transactions. Prisma Studio opens a browser interface for inspecting the records. The current application routes still use the in-memory demo store; switching those routes to Prisma is a separate step.
 
 ## Real vs simulated
 | Real | Simulated / not built |

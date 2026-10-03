@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  DONOR
+  ORGANIZER
+  INSTITUTION_ADMIN
+  ADMIN
+}
+
+enum InstitutionVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  FUNDED
+  COMPLETED
+  CANCELLED
+}
+
+enum DonationStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+  REFUNDED
+}
+
+enum LedgerTransactionType {
+  PAYMENT_RECEIVED
+  SETTLEMENT_TO_INSTITUTION
+  REFUND
+  ADJUSTMENT
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String?
+  email     String?    @unique
+  phone     String?    @unique
+  role      UserRole   @default(DONOR)
+  campaigns Campaign[] @relation("CampaignOrganizer")
+  donations Donation[] @relation("DonationDonor")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([role])
+}
+
+model Institution {
+  id                 String                        @id @default(cuid())
+  name               String
+  category           String
+  paybill            String                        @unique
+  verificationStatus InstitutionVerificationStatus @default(PENDING)
+  verifiedAt         DateTime?
+  campaigns          Campaign[]
+  createdAt          DateTime                      @default(now())
+  updatedAt          DateTime                      @updatedAt
+}
+
+model Campaign {
+  id             String              @id @default(cuid())
+  publicId       String              @unique
+  title          String
+  accountRef     String
+  organizerPhone String
+  targetKes      Int
+  raisedKes      Int                 @default(0)
+  status         CampaignStatus      @default(DRAFT)
+  institutionId  String
+  institution    Institution         @relation(fields: [institutionId], references: [id], onDelete: Restrict)
+  organizerId    String?
+  organizer      User?               @relation("CampaignOrganizer", fields: [organizerId], references: [id], onDelete: SetNull)
+  donations      Donation[]
+  ledgerEntries  LedgerTransaction[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([institutionId, status])
+  @@index([organizerId])
+}
+
+model Donation {
+  id            String              @id @default(cuid())
+  campaignId    String
+  campaign      Campaign            @relation(fields: [campaignId], references: [id], onDelete: Restrict)
+  donorId       String?
+  donor         User?               @relation("DonationDonor", fields: [donorId], references: [id], onDelete: SetNull)
+  donorName     String?
+  donorEmail    String?
+  donorPhone    String?
+  amountKes     Int
+  sats          Int
+  paymentHash   String?             @unique
+  bolt11        String?
+  status        DonationStatus      @default(PENDING)
+  paidAt        DateTime?
+  ledgerEntries LedgerTransaction[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([campaignId, status])
+  @@index([donorId])
+}
+
+model LedgerTransaction {
+  id         String                @id @default(cuid())
+  campaignId String
+  campaign   Campaign              @relation(fields: [campaignId], references: [id], onDelete: Restrict)
+  donationId String?
+  donation   Donation?             @relation(fields: [donationId], references: [id], onDelete: Restrict)
+  type       LedgerTransactionType
+  amountKes  Int
+  sats       Int?
+  currency   String                @default("KES")
+  reference  String?
+  memo       String?
+  createdAt  DateTime              @default(now())
+
+  @@index([campaignId, createdAt])
+  @@index([donationId])
+  @@index([type, createdAt])
+}
