@@ -23,7 +23,31 @@ cp .env.example .env.local      # Windows: copy .env.example .env.local
 npm install
 npm run dev                     # http://localhost:3000
 ```
-Demo path: Landing > **Donate Now** > Lightning > *simulate wallet payment* > receipt. Also try `/demo`, the USSD simulator (PayBill `400200`), `/lightning`, `/institutions`.
+Demo path: Landing > **Donate Now** > Lightning > *simulate wallet payment* > receipt. Also try the interactive USSD phone under **How It Works** (PayBill `400200`), `/demo`, `/lightning`, `/institutions`.
+
+## USSD demo (free)
+
+The landing **How It Works** phone is an **interactive USSD simulator**. It calls `POST /api/ussd` with the same Africa's Talking form shape used in production.
+
+**Try it on the site**
+1. Press the green call button on `*384*99#`
+2. Choose `1` (Education)
+3. Enter PayBill `400200`
+4. Enter an account number (e.g. `101`)
+5. Enter an amount (e.g. `5000`)
+6. Confirm with `1` — a campaign is created and a share link is returned
+
+**Free vs real phone**
+- Free: web simulator on BillBridge + optional Africa's Talking **sandbox** simulator ([simulator.africastalking.com](https://simulator.africastalking.com:1517/)) pointing at your public `/api/ussd` URL
+- Not free: dialing on a real handset needs a paid Safaricom USSD test bed later — sandbox cannot reach real phones
+
+**Sandbox wiring (optional)**
+1. Create a free AT sandbox app and USSD channel; set callback to `https://YOUR_HOST/api/ussd`
+2. Set `AT_USERNAME=sandbox` and `AT_API_KEY` in `.env.local`
+3. Expose local dev with ngrok or use your Vercel URL
+4. Test in the AT simulator (not a physical phone)
+
+Demo PayBills: `400200`, `522001`, `888880`, `400300`, `522002`, `888881`.
 
 ## Environment variables (`.env.example`)
 | Variable | Purpose |
@@ -31,7 +55,7 @@ Demo path: Landing > **Donate Now** > Lightning > *simulate wallet payment* > re
 | `DATABASE_URL` | PostgreSQL connection string used by Prisma |
 | `LNBITS_URL`, `LNBITS_INVOICE_KEY` | Real Lightning invoices. Empty = demo mode |
 | `APP_URL`, `NEXT_PUBLIC_APP_URL` | Public URL used in SMS and WhatsApp links |
-| `AT_USERNAME`, `AT_API_KEY` | Africa's Talking SMS (empty = logged to console) |
+| `AT_USERNAME`, `AT_API_KEY` | Africa's Talking SMS/USSD (empty SMS = logged to console). Sandbox username is `sandbox` |
 | `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` | BillBridge Help AI via OpenRouter (empty = built-in FAQ answers). Default free model: `nvidia/nemotron-3.5-lightning:free` |
 | `BITCOINKE_LIVE` | `true` = REAL mainnet Lightning-to-M-Pesa payments. Leave empty for demo |
 | `FALLBACK_BTC_USD` | Fallback BTC price if live rates are unreachable |
