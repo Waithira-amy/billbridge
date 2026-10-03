@@ -35,6 +35,7 @@ const ON_TOPIC_FALLBACK =
   "I can help with what BillBridge is, starting a fundraiser, donating, verification, fees, and USSD. Which would you like to know about?";
 
 const PRESET_ANSWERS: Record<string, string> = {
+  billbridge: WHAT_IS_BILLBRIDGE,
   "what is billbridge": WHAT_IS_BILLBRIDGE,
   "what is billbridge?": WHAT_IS_BILLBRIDGE,
   "how do i start a fundraiser?":
@@ -46,6 +47,7 @@ const PRESET_ANSWERS: Record<string, string> = {
 };
 
 const FAQ: [RegExp, string][] = [
+  [/^(what is |who are you|about |explain )?billbridge\??$/i, WHAT_IS_BILLBRIDGE],
   [/what is billbridge|who are you|about billbridge|explain billbridge/i, WHAT_IS_BILLBRIDGE],
   [/start|create|organi[sz]|register/i, PRESET_ANSWERS["how do i start a fundraiser?"]],
   [/safe|trust|scam|divert|money/i, PRESET_ANSWERS["is my money safe?"]],
