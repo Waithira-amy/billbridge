@@ -4,11 +4,11 @@ import UssdSimulator from "@/components/UssdSimulator";
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-16 bg-slate-50 overflow-hidden">
+    <section id="how-it-works" className="py-20 bg-slate-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         
-        {/* Scaled down header text and margins */}
-        <div className="text-center mb-12">
+        {/* Header */}
+        <div className="text-center mb-14">
           <h2 className="text-xs font-bold tracking-[0.2em] text-[#D4AF37] uppercase mb-3">Simple as SMS</h2>
           <h3 className="text-3xl md:text-4xl font-extrabold text-blue-950 mb-4">How BillBridge Works</h3>
           <p className="text-sm md:text-base text-gray-600 max-w-xl mx-auto">
@@ -16,44 +16,42 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        {/* Tightened gap between phones */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
           
           {/* STEP 1: THE DIALER (interactive) */}
           <div className="flex flex-col items-center">
-            <UssdSimulator />
+            {/* We scale the Simulator down to 85% to perfectly match the 220px phones */}
+            <div className="transform scale-[0.85] origin-top mb-[-60px]">
+              <UssdSimulator />
+            </div>
 
             {/* Layman Explanation */}
             <div className="text-center px-4 mt-2">
               <div className="w-8 h-8 bg-blue-100 text-blue-950 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-3">1</div>
               <h4 className="text-lg font-bold text-blue-950 mb-2">Dial the Code</h4>
               <p className="text-gray-600 text-xs leading-relaxed">
-                Start on any basic phone. Dial the code, enter the Hospital or School&apos;s official PayBill number, and enter the amount needed.
+                Start on any basic phone. Dial the code, enter the Hospital or School's official PayBill number, and enter the amount needed.
               </p>
             </div>
           </div>
 
-
           {/* STEP 2: THE SMS SHARE */}
           <div className="flex flex-col items-center">
-            {/* Phone Mockup */}
+            {/* Phone Mockup - 220px */}
             <div className="w-[220px] h-[440px] bg-white rounded-[2.5rem] border-[8px] border-gray-900 shadow-lg relative overflow-hidden flex flex-col mb-6">
               <div className="absolute top-0 inset-x-0 h-4 bg-gray-900 w-28 mx-auto rounded-b-xl"></div>
               
-              {/* Header */}
               <div className="bg-slate-100 pt-8 pb-3 px-4 text-center border-b border-gray-200">
                 <span className="font-bold text-slate-800 text-xs">Messages</span>
               </div>
 
               <div className="flex-1 p-4 flex flex-col justify-end bg-white pb-8">
-                {/* Fake SMS Bubble */}
                 <div className="bg-gray-100 text-slate-800 p-3 rounded-xl rounded-tl-sm text-xs mb-6 shadow-sm">
                   <p className="font-bold text-blue-950 mb-1">BillBridge Alert</p>
                   <p className="mb-1">Campaign ready for Kenyatta National Hospital.</p>
                   <p className="text-blue-600 underline">bbridge.io/knh-123</p>
                 </div>
 
-                {/* Forward/Share Button */}
                 <div className="relative mx-auto w-full">
                   <div className="absolute inset-0 bg-blue-400 rounded-full animate-ping opacity-50"></div>
                   <ShareButton text="Help fund a verified bill on BillBridge:" path="/#campaigns" className="relative w-full bg-blue-600 text-white rounded-full py-2.5 text-xs font-bold flex items-center justify-center gap-2 shadow-md z-10">
@@ -74,10 +72,9 @@ export default function HowItWorks() {
             </div>
           </div>
 
-
           {/* STEP 3: THE DONOR WALLET */}
           <div className="flex flex-col items-center">
-            {/* Phone Mockup */}
+            {/* Phone Mockup - 220px */}
             <div className="w-[220px] h-[440px] bg-slate-900 rounded-[2.5rem] border-[8px] border-gray-900 shadow-lg relative overflow-hidden flex flex-col mb-6 text-white">
               <div className="absolute top-0 inset-x-0 h-4 bg-black w-28 mx-auto rounded-b-xl"></div>
               
@@ -92,7 +89,6 @@ export default function HowItWorks() {
                 <div className="text-2xl font-light mb-1">KES 15,000</div>
                 <div className="text-gray-500 text-xs mb-8">≈ $115.50 (Zero Fees)</div>
 
-                {/* Pay Button */}
                 <div className="relative w-full">
                   <div className="absolute inset-0 bg-amber-400 rounded-full animate-ping opacity-40"></div>
                   <Link href="/campaigns" className="relative w-full bg-gradient-to-r from-[#D4AF37] to-amber-500 text-blue-950 rounded-full py-3 font-bold text-xs shadow-lg shadow-amber-500/20 z-10 flex justify-center items-center gap-2">
@@ -108,7 +104,7 @@ export default function HowItWorks() {
               <div className="w-8 h-8 bg-[#D4AF37] text-blue-950 rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-3 shadow-md">3</div>
               <h4 className="text-lg font-bold text-blue-950 mb-2">They Pay Directly</h4>
               <p className="text-gray-600 text-xs leading-relaxed">
-                Relatives abroad open the link and tap pay. The money goes straight to the hospital&apos;s account immediately. No middlemen.
+                Relatives abroad open the link and tap pay. The money goes straight to the hospital's account immediately. No middlemen.
               </p>
             </div>
           </div>

@@ -11,42 +11,43 @@ const allCampaigns = [
     id: 1, category: "Education", title: "Form 4 Tuition Arrears", 
     beneficiary: "David Ochieng", institution: "St. Mary's High School",
     percentage: 82, baseRaised: 41000, baseGoal: 50000, satsEquivalent: "~350k Sats", color: "#10B981", 
-    image: "https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800&auto=format&fit=crop" 
+    image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?q=80&w=800&auto=format&fit=crop" 
   },
   {
     id: 2, category: "Medical", title: "Maternity Ward Discharge", 
     beneficiary: "Grace Mutuku & Baby", institution: "Kenyatta National Hospital",
     percentage: 91, baseRaised: 136500, baseGoal: 150000, satsEquivalent: "~1.2M Sats", color: "#D4AF37", 
-    image: "https://images.unsplash.com/photo-1531123414708-536962a1473f?q=80&w=800&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1511988617509-a5708af470b0?q=80&w=800&auto=format&fit=crop"
   },
   {
     id: 3, category: "Community", title: "Borehole Pump Repair", 
     beneficiary: "Maji Safi Village", institution: "Maji Safi Trust",
     percentage: 88, baseRaised: 88000, baseGoal: 100000, satsEquivalent: "~750k Sats", color: "#3B82F6",
-    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=800&auto=format&fit=crop"
   },
   {
     id: 4, category: "Education", title: "Final Year Exam Fees", 
     beneficiary: "Brian Kipkorir", institution: "Daystar University",
     percentage: 45, baseRaised: 27000, baseGoal: 60000, satsEquivalent: "~230k Sats", color: "#10B981", 
-    image: "https://images.unsplash.com/photo-1506803682981-6e718a9dd3ee?q=80&w=800&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800&auto=format&fit=crop"
   },
   {
     id: 5, category: "Medical", title: "Emergency Appendectomy", 
     beneficiary: "Amina Hassan", institution: "Aga Khan Hospital",
     percentage: 60, baseRaised: 120000, baseGoal: 200000, satsEquivalent: "~1M Sats", color: "#D4AF37",
-    image: "https://images.unsplash.com/photo-1579883584852-c0e5a6fc30eb?q=80&w=800&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800&auto=format&fit=crop"
   },
   {
     id: 6, category: "Community", title: "Solar Panel Installation", 
     beneficiary: "Upendo Orphanage", institution: "Upendo Children's Home",
     percentage: 30, baseRaised: 15000, baseGoal: 50000, satsEquivalent: "~128k Sats", color: "#3B82F6",
-    image: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?q=80&w=800&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop"
   }
 ];
 
 export default function VerifiedBills() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [campaignSearch, setCampaignSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(0); 
   
   const [activeCurrencyCode, setActiveCurrencyCode] = useState("USD");
@@ -66,7 +67,6 @@ export default function VerifiedBills() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Scaled down the circle radius for the compact view
   const radius = 28; 
   const circumference = 2 * Math.PI * radius;
 
@@ -78,9 +78,15 @@ export default function VerifiedBills() {
   const africanCurrencies = filteredCurrencies.filter(c => c.type === "African");
   const globalCurrencies = filteredCurrencies.filter(c => c.type === "Global");
 
-  const filteredCampaigns = allCampaigns.filter(
-    (campaign) => activeCategory === "All" || campaign.category === activeCategory
-  );
+  // Updated filter logic to include the new search bar
+  const filteredCampaigns = allCampaigns.filter((campaign) => {
+    const matchesCategory = activeCategory === "All" || campaign.category === activeCategory;
+    const searchLower = campaignSearch.toLowerCase();
+    const matchesSearch = campaign.title.toLowerCase().includes(searchLower) || 
+                          campaign.institution.toLowerCase().includes(searchLower) ||
+                          campaign.beneficiary.toLowerCase().includes(searchLower);
+    return matchesCategory && matchesSearch;
+  });
 
   const itemsPerPage = 3;
   const totalPages = Math.ceil(filteredCampaigns.length / itemsPerPage);
@@ -95,7 +101,7 @@ export default function VerifiedBills() {
       setCurrentPage((prev) => (prev + 1) % totalPages);
     }, 7000);
     return () => clearInterval(timer);
-  }, [totalPages, activeCategory]);
+  }, [totalPages, activeCategory, campaignSearch]);
 
   const handleCategoryChange = (cat: string) => {
     setActiveCategory(cat);
@@ -109,10 +115,10 @@ export default function VerifiedBills() {
   };
 
   return (
-    <section id="campaigns" className="py-16 bg-slate-50 overflow-hidden">
+    // Changed to bg-white and added border-t to completely separate it from the previous section
+    <section id="campaigns" className="py-24 bg-white border-t border-slate-200 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         
-        {/* Scaled down headers */}
         <div className="text-center mb-10">
           <h2 className="text-xs font-bold tracking-[0.2em] text-[#D4AF37] uppercase mb-3">Direct Funding</h2>
           <h3 className="text-3xl md:text-4xl font-extrabold text-blue-950 mb-4">Verified Campaigns</h3>
@@ -121,28 +127,41 @@ export default function VerifiedBills() {
           </p>
         </div>
 
-        {/* Filters Row */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-12 relative z-50">
+        {/* Enhanced Filters Row with Search Bar */}
+        <div className="flex flex-col md:flex-row flex-wrap items-center justify-between gap-4 mb-12 relative z-50">
           
-          <div className="bg-white p-1.5 rounded-full inline-flex flex-wrap justify-center gap-1 border border-slate-200 shadow-sm">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => handleCategoryChange(cat)}
-                className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 ${
-                  activeCategory === cat 
-                    ? "bg-blue-950 text-white shadow-md" 
-                    : "text-slate-500 hover:text-blue-950 hover:bg-slate-50"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="bg-slate-50 p-1.5 rounded-full inline-flex flex-wrap justify-center gap-1 border border-slate-200 shadow-sm">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => handleCategoryChange(cat)}
+                  className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all duration-300 ${
+                    activeCategory === cat 
+                      ? "bg-blue-950 text-white shadow-md" 
+                      : "text-slate-500 hover:text-blue-950 hover:bg-white"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* New Campaign Search Bar */}
+            <div className="relative w-full md:w-64">
+              <svg className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input 
+                type="text" 
+                placeholder="Search campaigns..."
+                value={campaignSearch}
+                onChange={(e) => { setCampaignSearch(e.target.value); setCurrentPage(0); }}
+                className="w-full bg-slate-50 border border-slate-200 rounded-full py-2.5 pl-10 pr-4 text-xs font-medium focus:outline-none focus:border-blue-950 focus:ring-1 focus:ring-blue-950 transition-colors shadow-sm"
+              />
+            </div>
           </div>
 
-          {/* Scaled down Currency Dropdown */}
           <div className="relative w-full md:w-auto" ref={dropdownRef}>
-            <div className="flex items-center bg-white border border-slate-200 shadow-sm rounded-full p-1 md:w-64">
+            <div className="flex items-center bg-slate-50 border border-slate-200 shadow-sm rounded-full p-1 md:w-64">
               <button 
                 onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
                 className="flex-1 text-xs font-bold text-slate-500 hover:text-blue-950 transition-colors text-left pl-4"
@@ -151,7 +170,7 @@ export default function VerifiedBills() {
               </button>
               <button 
                 onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
-                className="bg-slate-100 text-blue-950 px-4 py-2 rounded-full text-xs font-extrabold flex items-center gap-2 hover:bg-slate-200 transition-colors"
+                className="bg-white text-blue-950 px-4 py-2 rounded-full text-xs font-extrabold flex items-center gap-2 hover:bg-slate-100 transition-colors shadow-sm"
               >
                 <span>{activeCurrencyCode}</span>
                 <svg className={`w-3.5 h-3.5 transition-transform duration-300 ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
@@ -225,10 +244,6 @@ export default function VerifiedBills() {
                         ))}
                       </div>
                     )}
-
-                    {filteredCurrencies.length === 0 && (
-                      <div className="text-center py-4 text-xs text-gray-400">No currencies found.</div>
-                    )}
                   </div>
                 </motion.div>
               )}
@@ -240,7 +255,7 @@ export default function VerifiedBills() {
         <div className="min-h-[500px] relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 absolute w-full">
             <AnimatePresence mode="popLayout">
-              {currentCampaigns.map((campaign, index) => {
+              {currentCampaigns.length > 0 ? currentCampaigns.map((campaign, index) => {
                 const strokeDashoffset = circumference - (campaign.percentage / 100) * circumference;
 
                 return (
@@ -250,10 +265,8 @@ export default function VerifiedBills() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 60, scale: 0.95 }} 
                     transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
-                    className="flex flex-col bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden group hover:shadow-xl transition-shadow"
+                    className="flex flex-col bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden group hover:shadow-xl transition-shadow pb-4"
                   >
-                    
-                    {/* Scaled down Image (h-44) */}
                     <div className="relative w-full h-44 bg-gradient-to-br from-blue-100 to-amber-100">
                       <Image
                         src={campaign.image}
@@ -268,9 +281,7 @@ export default function VerifiedBills() {
                       </div>
                     </div>
 
-                    <div className="relative px-5 pt-8 pb-5 flex-1 flex flex-col">
-                      
-                      {/* Scaled down Progress Circle (w-16 h-16) */}
+                    <div className="relative px-5 pt-8 pb-3 flex-1 flex flex-col">
                       <div className="absolute -top-10 right-5 bg-white rounded-full p-1 shadow-md">
                         <div className="relative w-16 h-16 flex items-center justify-center bg-slate-50 rounded-full">
                           <span className="text-xs font-extrabold" style={{ color: campaign.color }}>
@@ -291,7 +302,6 @@ export default function VerifiedBills() {
                         </div>
                       </div>
 
-                      {/* Scaled Text Elements */}
                       <h4 className="text-base font-bold text-blue-950 mb-2 leading-tight">{campaign.title}</h4>
                       
                       <div className="flex flex-col gap-1 mb-4">
@@ -311,8 +321,7 @@ export default function VerifiedBills() {
 
                       <div className="flex-1"></div> 
 
-                      {/* Compact Finance Block */}
-                      <div className="bg-slate-50 w-full rounded-xl p-3 mb-4 border border-slate-100">
+                      <div className="bg-slate-50 w-full rounded-xl p-3 mb-5 border border-slate-100">
                         <div className="flex justify-between items-center mb-1 text-xs font-bold text-blue-950">
                           <span>Raised</span>
                           <span>Goal</span>
@@ -330,18 +339,24 @@ export default function VerifiedBills() {
                         </div>
                       </div>
 
-                      {/* Compact Button */}
-                      <Link href={`/donate/BB-${campaign.id}?currency=${activeCurrencyCode}`}
-                        className="block text-center w-full py-2.5 rounded-full text-xs font-bold text-white transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                        style={{ backgroundColor: campaign.color }}
-                      >
-                        Donate Now
-                      </Link>
+                      {/* Reduced width Donate Button centered in the card */}
+                      <div className="flex justify-center">
+                        <Link href={`/donate/BB-${campaign.id}?currency=${activeCurrencyCode}`}
+                          className="block text-center w-[80%] py-2.5 rounded-full text-xs font-bold text-white transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                          style={{ backgroundColor: campaign.color }}
+                        >
+                          Donate Now
+                        </Link>
+                      </div>
 
                     </div>
                   </motion.div>
                 );
-              })}
+              }) : (
+                <div className="col-span-3 text-center py-12 text-slate-500 text-sm">
+                  No verified campaigns found matching your search.
+                </div>
+              )}
             </AnimatePresence>
           </div>
         </div>

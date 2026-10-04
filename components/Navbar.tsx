@@ -50,7 +50,7 @@ export default function Navbar() {
             Partner Login
           </Link>
           <Link href="/start" className="bg-blue-950 hover:bg-slate-800 text-white px-6 py-2.5 rounded-full text-xs font-bold transition-all shadow-md hover:shadow-lg">
-            Partner Portal
+            Start a Campaign
           </Link>
         </div>
       </div>
