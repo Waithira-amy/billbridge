@@ -46,10 +46,7 @@ export default function Navbar() {
 
         {/* Call to Action - Updated for Institutional Partners */}
         <div className="flex items-center gap-4">
-          <Link href="/login" className="hidden sm:block text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-950 transition-colors">
-            Partner Login
-          </Link>
-          <Link href="/start" className="bg-blue-950 hover:bg-slate-800 text-white px-6 py-2.5 rounded-full text-xs font-bold transition-all shadow-md hover:shadow-lg">
+          <Link href="/institution/login" className="bg-blue-950 hover:bg-slate-800 text-white px-6 py-2.5 rounded-full text-xs font-bold transition-all shadow-md hover:shadow-lg">
             Start a Campaign
           </Link>
         </div>
