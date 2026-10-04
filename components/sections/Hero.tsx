@@ -37,7 +37,7 @@ export default function Hero() {
           </Link>
 
           {/* Button 3: Start a Campaign */}
-          <Link href="/start" className="w-full md:w-auto px-8 py-3 rounded-full text-sm font-bold text-white bg-blue-950 hover:bg-blue-900 border border-blue-900 transition-all shadow-[0_6px_15px_rgba(23,37,84,0.2)] hover:shadow-[0_6px_20px_rgba(23,37,84,0.3)] hover:-translate-y-0.5 transform duration-200">
+          <Link href="/institution/login" className="w-full md:w-auto px-8 py-3 rounded-full text-sm font-bold text-white bg-blue-950 hover:bg-blue-900 border border-blue-900 transition-all shadow-[0_6px_15px_rgba(23,37,84,0.2)] hover:shadow-[0_6px_20px_rgba(23,37,84,0.3)] hover:-translate-y-0.5 transform duration-200">
             Start a Campaign
           </Link>
 
