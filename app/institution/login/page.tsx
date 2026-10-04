@@ -30,7 +30,7 @@ export default function InstitutionLoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-10">
-        <main className="relative mx-auto w-full max-w-md space-y-6 rounded-[2rem] border-t-[6px] border-t-[#D4AF37] bg-white p-8 text-blue-950 shadow-2xl sm:p-10">
+      <main className="relative mx-auto w-full max-w-md space-y-6 rounded-[2rem] border-t-[6px] border-t-[#D4AF37] bg-white p-8 text-blue-950 shadow-2xl sm:p-10">
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-slate-100 bg-slate-50 shadow-sm">
               <svg className="h-5 w-5 text-blue-950" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -162,7 +162,7 @@ export default function InstitutionLoginPage() {
               {mode === "login" ? "Register Institution" : "Back to Institution Login"}
             </button>
           </div>
-        </main>
+      </main>
     </div>
   );
 }
