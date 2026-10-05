@@ -1,37 +1,50 @@
-import { db } from "@/lib/store";
-import { createInvoice, kesToSats } from "@/lib/lightning";
-import { isValidDonorEmail, isValidDonorName, isValidDonorPhone } from "@/lib/donor-validation";
-export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const c = db.campaigns.get((await params).id); if (!c) return Response.json({ error: "not found" }, { status: 404 });
-  const body = await req.json();
-  const remaining = c.targetKes - c.raisedKes, kes = Math.floor(Number(body.amountKes));
-  if (!(kes > 0) || kes > remaining) return Response.json({ error: `Amount must be 1-${remaining}` }, { status: 400 });
-  const details = body.donorDetails ?? {};
-  const name = typeof details.name === "string" ? details.name.trim() : "";
-  const email = typeof details.email === "string" ? details.email.trim() : "";
-  const phone = typeof details.phone === "string" ? details.phone.replace(/[\s().-]/g, "") : "";
-  if (!isValidDonorName(name)) {
-    return Response.json({ error: "Name can only contain letters and spaces (up to 100 characters)." }, { status: 400 });
+import { NextResponse } from "next/server";
+
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const { amountKes, customerEmail, description } = body;
+
+    // Bitnob's API requires the amount in USD cents. 
+    // We do a rough conversion here (Assuming ~130 KES = $1.00 = 100 cents)
+    const amountInCents = Math.round((amountKes / 130) * 100); 
+
+    // Securely call the Bitnob Sandbox API
+    const response = await fetch("https://sandboxapi.bitnob.co/api/v1/charges", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.BITNOB_SECRET_KEY}`
+      },
+      body: JSON.stringify({
+        amount: amountInCents > 0 ? amountInCents : 100, // Minimum charge is 100 cents
+        customerEmail: customerEmail,
+        description: description,
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Bitnob API Error:", data);
+      return NextResponse.json({ error: data.message || "Failed to generate invoice with Bitnob" }, { status: response.status });
+    }
+
+    // Extract the actual Lightning invoice string (BOLT11) from Bitnob's response
+    const invoiceString = data.data?.lightning_instructions?.invoice || data.data?.invoice;
+
+    return NextResponse.json({ 
+      invoice: invoiceString,
+      trackingId: data.data?.id,
+      message: "Invoice created successfully" 
+    });
+
+  } catch (error) {
+    console.error("Internal Server Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
-  if (!isValidDonorEmail(email)) {
-    return Response.json({ error: "Enter a valid email address." }, { status: 400 });
-  }
-  if (phone && !isValidDonorPhone(phone)) {
-    return Response.json({ error: "Enter a valid phone number for the selected country." }, { status: 400 });
-  }
-  const donor = { ...(name && { name }), ...(email && { email }), ...(phone && { phone }) };
-  const sats = kesToSats(kes), inv = await createInvoice(sats, `BillBridge ${c.id}`);
-  db.payments.set(inv.hash, {
-    hash: inv.hash,
-    campaignId: c.id,
-    kes,
-    sats,
-    bolt11: inv.bolt11,
-    status: "pending",
-    ...(Object.keys(donor).length > 0 && { donor }),
-  });
-  return Response.json({ hash: inv.hash, bolt11: inv.bolt11, sats, kes });
-}
-export async function GET(req: Request) { // poll status: ?hash=
-  const p = db.payments.get(new URL(req.url).searchParams.get("hash") ?? ""); return Response.json({ status: p?.status ?? "unknown" });
 }

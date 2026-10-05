@@ -214,6 +214,7 @@ export default function Donate({ params }: { params: Promise<{ id: string }> }) 
     setCreatingInvoice(true);
 
     try {
+      // Calls your existing backend route, passing the required Bitnob parameters
       const response = await fetch(`/api/campaigns/${id}/invoice`, {
         method: "POST",
         headers: {
@@ -221,6 +222,8 @@ export default function Donate({ params }: { params: Promise<{ id: string }> }) 
         },
         body: JSON.stringify({
           amountKes,
+          customerEmail: donorEmail.trim() || "donor@billbridge.io", // Fallback email for Bitnob
+          description: `Donation to ${bill?.institution || 'Institution'}`, // Required by Bitnob
           donorDetails: {
             name: donorName,
             email: donorEmail,
